@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     // Pindah ke MainActivity
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("USER_EMAIL", email);
                     startActivity(intent);
                     finish(); // Tutup LoginActivity agar pengguna tidak bisa kembali
                 } else {

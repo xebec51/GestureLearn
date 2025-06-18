@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="10dp">
+
+    <LinearLayout
+        android:id="@+id/ll_rectangle"
+        android:layout_width="200dp"
+        android:layout_height="320dp"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/shape_green_rectangle"
+        android:orientation="vertical"
+        android:paddingTop="70dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/btn_bisindoLetter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="@color/green"
+            android:text="ABJAD BISINDO"
+            android:textSize="12sp"
+            android:minHeight="10dp"
+            android:paddingVertical="3dp"
+            android:background="@drawable/shape_white_button"
+            app:backgroundTint="@null"
+            android:layout_gravity="center_horizontal"/>
+        
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="@color/green"
+            android:textSize="12sp"
+            android:textAlignment="center"
+            android:text="Pelajari huruf dengan pendekatan alami dan ekspresif khas BISINDO, bahasa isyarat yang tumbuh dari komunikasi sehari-hari"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_example"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:src="@drawable/img_home_example1"
+        android:padding="8dp"
+        android:background="@drawable/shape_circle_green"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/ll_rectangle"
+        app:layout_constraintEnd_toEndOf="@id/ll_rectangle"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,4 +13,9 @@
     <color name="text_secondary">#757575</color>
     <color name="text_accent">#5D8C3E</color>
     <color name="button_primary_color">#ADC698</color>
+
+    <color name="lightGreen">#D3DCBA</color>
+    <color name="green">#5F7C50</color>
+    <color name="greenHint">#759663</color>
+
 </resources>

@@ -4,4 +4,6 @@
 
     <string name="prompt_signup">Don\'t have an account? <b><font color="#5D8C3E">Sign Up</font></b></string>
     <string name="prompt_signin">Already have an account? <b><font color="#5D8C3E">Sign In</font></b></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
