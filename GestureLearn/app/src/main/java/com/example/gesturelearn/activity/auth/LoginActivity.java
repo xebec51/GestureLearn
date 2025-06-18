@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.gesturelearn.R;
+import com.example.gesturelearn.activity.MainActivity;
 import com.example.gesturelearn.data.DatabaseHelper;
 import com.google.android.material.textfield.TextInputEditText;
 
