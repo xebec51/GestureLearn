@@ -145,4 +145,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return result > 0;
     }
+
+    public boolean updatePassword(String email, String newPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PASSWORD, newPassword);
+
+        // Memperbarui baris berdasarkan email
+        int result = db.update(TABLE_USERS, values, COLUMN_EMAIL + " = ?", new String[]{email});
+        db.close();
+        return result > 0;
+    }
 }

@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.gesturelearn.R;
+import com.example.gesturelearn.activity.ChangePasswordActivity;
 import com.example.gesturelearn.activity.EditProfileActivity;
 import com.example.gesturelearn.activity.auth.LoginActivity;
 import com.example.gesturelearn.data.DatabaseHelper;
@@ -24,7 +25,7 @@ import com.example.gesturelearn.data.DatabaseHelper;
 public class ProfileFragment extends Fragment {
 
     private TextView tvNameValue, tvEmailValue, tvPointValue;
-    private Button btnEditProfile, btnLogout;
+    private Button btnEditProfile, btnLogout, btnChangePassword;
     private DatabaseHelper databaseHelper;
     private String userEmail;
 
@@ -67,6 +68,7 @@ public class ProfileFragment extends Fragment {
         tvPointValue = view.findViewById(R.id.tv_point_value);
         btnEditProfile = view.findViewById(R.id.btn_editProfile);
         btnLogout = view.findViewById(R.id.btn_logout);
+        btnChangePassword = view.findViewById(R.id.btn_change_password);
 
         loadUserData();
 
@@ -79,6 +81,12 @@ public class ProfileFragment extends Fragment {
 
         btnLogout.setOnClickListener(v -> {
             logoutUser();
+        });
+
+        btnChangePassword.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
+            intent.putExtra("USER_EMAIL", userEmail);
+            startActivity(intent);
         });
     }
 
