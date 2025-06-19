@@ -15,6 +15,12 @@
         android:theme="@style/Theme.GestureLearn"
         tools:targetApi="31">
         <activity
+            android:name=".activity.kuis.ReverseQuizActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.kuis.AlphabetQuizActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ChangePasswordActivity"
             android:exported="false" />
         <activity

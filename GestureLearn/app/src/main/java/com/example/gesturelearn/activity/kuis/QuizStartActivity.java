@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.gesturelearn.R;
 
@@ -34,10 +36,26 @@ public class QuizStartActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         btnStartQuiz.setOnClickListener(v -> {
-            Intent intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
-            // Teruskan kategori ke activity pertanyaan
+            Intent intent;
+            // Cek kategori kuis yang dipilih
+            if (quizCategory.equals("KOSAKATA")) {
+                // Jika kuis kosakata, buka QuizQuestionActivity
+                intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
+            } else if (quizCategory.equals("ABJAD_SIBI")) {
+                // Jika kuis abjad SIBI, buka ReverseQuizActivity (Tebak Gambar)
+                // Untuk sementara, kita arahkan ke yang sudah ada. Nanti bisa diganti.
+                Toast.makeText(this, "Fitur Kuis SIBI belum tersedia.", Toast.LENGTH_SHORT).show();
+                // intent = new Intent(QuizStartActivity.this, ReverseQuizActivity.class);
+                return; // Hentikan eksekusi
+            }
+            else {
+                // Untuk kuis abjad lainnya (BISINDO), buka AlphabetQuizActivity (Tebak Huruf)
+                intent = new Intent(QuizStartActivity.this, AlphabetQuizActivity.class);
+            }
+
+            // Teruskan kategori dan judul ke activity yang sesuai
             intent.putExtra("QUIZ_CATEGORY", quizCategory);
-            intent.putExtra("QUIZ_TITLE", quizTitle); // Teruskan juga judulnya
+            intent.putExtra("QUIZ_TITLE", quizTitle);
             startActivity(intent);
             finish();
         });

@@ -19,11 +19,13 @@ public class QuizGenerator {
     public static List<QuizQuestion> generateQuestions(SignDao signDao, String category, int numberOfQuestions) {
         // Ambil data berdasarkan kategori dari database
         List<Sign> categorySigns = signDao.getSignsByCategory(category);
-        // Ambil semua data untuk digunakan sebagai pilihan jawaban salah
-        List<Sign> allSigns = signDao.getAllSigns();
 
-        // Pastikan data cukup untuk membuat kuis
-        if (categorySigns.isEmpty() || allSigns.size() < 4) {
+        // --- PERBAIKAN 1: Hapus pengambilan semua data yang tidak perlu ---
+        // List<Sign> allSigns = signDao.getAllSigns();
+
+        // --- PERBAIKAN 2: Pastikan data di kategori ini cukup untuk membuat pilihan ganda ---
+        // Kita butuh setidaknya 4 item untuk 1 jawaban benar dan 3 jawaban salah.
+        if (categorySigns.size() < 4) {
             return new ArrayList<>(); // Kembalikan list kosong jika data tidak cukup
         }
 
@@ -41,8 +43,9 @@ public class QuizGenerator {
             List<String> options = new ArrayList<>();
             options.add(correctAnswer);
 
+            // --- PERBAIKAN 3: Ambil jawaban salah dari kategori yang sama ---
             // Buat kumpulan jawaban salah yang tidak mengandung jawaban benar
-            List<Sign> wrongAnswerPool = new ArrayList<>(allSigns);
+            List<Sign> wrongAnswerPool = new ArrayList<>(categorySigns); // Menggunakan categorySigns, bukan allSigns
             wrongAnswerPool.removeIf(sign -> sign.word.equals(correctAnswer));
             Collections.shuffle(wrongAnswerPool);
 
