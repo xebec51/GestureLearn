@@ -37,23 +37,15 @@ public class QuizStartActivity extends AppCompatActivity {
 
         btnStartQuiz.setOnClickListener(v -> {
             Intent intent;
-            // Cek kategori kuis yang dipilih
             if (quizCategory.equals("KOSAKATA")) {
-                // Jika kuis kosakata, buka QuizQuestionActivity
                 intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
             } else if (quizCategory.equals("ABJAD_SIBI")) {
-                // Jika kuis abjad SIBI, buka ReverseQuizActivity (Tebak Gambar)
-                // Untuk sementara, kita arahkan ke yang sudah ada. Nanti bisa diganti.
-                Toast.makeText(this, "Fitur Kuis SIBI belum tersedia.", Toast.LENGTH_SHORT).show();
-                // intent = new Intent(QuizStartActivity.this, ReverseQuizActivity.class);
-                return; // Hentikan eksekusi
-            }
-            else {
-                // Untuk kuis abjad lainnya (BISINDO), buka AlphabetQuizActivity (Tebak Huruf)
+                // DIUBAH: Sekarang kita arahkan ke ReverseQuizActivity
+                intent = new Intent(QuizStartActivity.this, ReverseQuizActivity.class);
+            } else { // Untuk ABJAD_BISINDO
                 intent = new Intent(QuizStartActivity.this, AlphabetQuizActivity.class);
             }
 
-            // Teruskan kategori dan judul ke activity yang sesuai
             intent.putExtra("QUIZ_CATEGORY", quizCategory);
             intent.putExtra("QUIZ_TITLE", quizTitle);
             startActivity(intent);
