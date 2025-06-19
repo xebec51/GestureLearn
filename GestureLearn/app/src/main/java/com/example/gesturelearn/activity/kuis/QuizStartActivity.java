@@ -37,12 +37,13 @@ public class QuizStartActivity extends AppCompatActivity {
 
         btnStartQuiz.setOnClickListener(v -> {
             Intent intent;
+
+            // Logika untuk memilih Activity Kuis yang tepat
             if (quizCategory.equals("KOSAKATA")) {
                 intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
             } else if (quizCategory.equals("ABJAD_SIBI")) {
-                // DIUBAH: Sekarang kita arahkan ke ReverseQuizActivity
                 intent = new Intent(QuizStartActivity.this, ReverseQuizActivity.class);
-            } else { // Untuk ABJAD_BISINDO
+            } else { // Asumsikan sisanya adalah ABJAD_BISINDO
                 intent = new Intent(QuizStartActivity.this, AlphabetQuizActivity.class);
             }
 

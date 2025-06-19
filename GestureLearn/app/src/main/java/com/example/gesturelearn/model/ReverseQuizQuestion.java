@@ -1,6 +1,5 @@
 package com.example.gesturelearn.model;
 
-import com.example.gesturelearn.model.Sign;
 import java.util.List;
 
 public class ReverseQuizQuestion {
