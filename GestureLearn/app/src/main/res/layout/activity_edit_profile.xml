@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activity.EditProfileActivity">
+
+    <ImageView
+        android:id="@+id/iv_background"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_profile_background"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/green" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_profilePicture"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginTop="95dp"
+        android:padding="3dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_profile_default"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+        app:strokeColor="@color/green"
+        app:strokeWidth="4dp" />
+
+    <ImageButton
+        android:id="@+id/ib_edit_photo"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/shape_circle_green"
+        android:src="@drawable/ic_pen"
+        app:layout_constraintBottom_toBottomOf="@id/iv_profilePicture"
+        app:layout_constraintEnd_toEndOf="@id/iv_profilePicture"/>
+
+    <TextView
+        android:id="@+id/tv_myProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_extrabold"
+        android:text="My Profile"
+        android:textColor="@color/green"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_profilePicture" />
+
+    <TextView
+        android:id="@+id/tv_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nama :"
+        android:textColor="@color/green"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_myProfile"/>
+
+    <EditText
+        android:id="@+id/et_name_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/shape_green_border2"
+        android:fontFamily="@font/poppins_regular"
+        android:padding="12dp"
+        android:textColor="@color/green"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_name_label" />
+
+    <TextView
+        android:id="@+id/tv_email_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email :"
+        android:textColor="@color/green"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_name_edit"/>
+
+    <TextView
+        android:id="@+id/tv_email_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/shape_green_border2"
+        android:fontFamily="@font/poppins_regular"
+        android:padding="12dp"
+        tools:text="email@example.com"
+        android:textColor="@color/greenHint"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_email_label" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/lightGreen"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingVertical="12dp"
+        android:text="Simpan"
+        android:textColor="@color/green"
+        android:textSize="16sp"
+        app:cornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

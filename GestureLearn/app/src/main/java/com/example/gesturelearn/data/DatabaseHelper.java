@@ -132,4 +132,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return null;
     }
+
+    // Di dalam file DatabaseHelper.java
+
+    public boolean updateUser(String email, String newName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, newName);
+
+        // Memperbarui baris berdasarkan email
+        int result = db.update(TABLE_USERS, values, COLUMN_EMAIL + " = ?", new String[]{email});
+        db.close();
+        return result > 0;
+    }
 }
