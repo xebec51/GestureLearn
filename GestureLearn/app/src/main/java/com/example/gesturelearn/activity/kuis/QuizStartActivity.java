@@ -1,5 +1,6 @@
 package com.example.gesturelearn.activity.kuis;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -24,16 +25,11 @@ public class QuizStartActivity extends AppCompatActivity {
             finish(); // Menutup activity ini dan kembali ke layar sebelumnya
         });
 
-        // Listener untuk tombol "Mulai"
         btnStartQuiz.setOnClickListener(v -> {
-            // TODO: Pindah ke halaman pertanyaan kuis yang sebenarnya
-            // Untuk sekarang, kita hanya akan menampilkan Toast
-            Toast.makeText(this, "Memulai Kuis Kosakata!", Toast.LENGTH_SHORT).show();
-
-            // Contoh Intent untuk ke halaman pertanyaan (jika sudah ada)
-            // Intent intent = new Intent(QuizStartActivity.this, QuizQuestionsActivity.class);
-            // startActivity(intent);
-            // finish();
+            // Ganti Toast dengan Intent ke QuizQuestionActivity
+            Intent intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
+            startActivity(intent);
+            finish(); // Tutup activity ini agar tidak bisa kembali
         });
     }
 }

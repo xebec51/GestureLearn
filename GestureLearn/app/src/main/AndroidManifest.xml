@@ -15,6 +15,12 @@
         android:theme="@style/Theme.GestureLearn"
         tools:targetApi="31">
         <activity
+            android:name=".activity.kuis.QuizResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.kuis.QuizQuestionActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.kuis.QuizStartActivity"
             android:exported="false" />
         <activity
