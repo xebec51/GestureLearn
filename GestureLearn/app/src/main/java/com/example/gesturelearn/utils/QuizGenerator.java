@@ -1,77 +1,61 @@
 package com.example.gesturelearn.utils;
 
-import android.content.Context;
+import com.example.gesturelearn.data.SignDao;
 import com.example.gesturelearn.model.QuizQuestion;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import com.example.gesturelearn.model.Sign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class QuizGenerator {
 
-    // Model internal untuk menyimpan pasangan kata dan URL
-    private static class QuizData {
-        String word;
-        String url;
+    /**
+     * Metode utama untuk menghasilkan daftar pertanyaan dari database melalui DAO.
+     * @param signDao Objek DAO untuk mengakses database.
+     * @param category Kategori kuis yang ingin dibuat (misal: "KOSAKATA").
+     * @param numberOfQuestions Jumlah pertanyaan yang ingin dibuat.
+     * @return Daftar pertanyaan kuis.
+     */
+    public static List<QuizQuestion> generateQuestions(SignDao signDao, String category, int numberOfQuestions) {
+        // Ambil data berdasarkan kategori dari database
+        List<Sign> categorySigns = signDao.getSignsByCategory(category);
+        // Ambil semua data untuk digunakan sebagai pilihan jawaban salah
+        List<Sign> allSigns = signDao.getAllSigns();
 
-        QuizData(String word, String url) {
-            this.word = word;
-            this.url = url;
+        // Pastikan data cukup untuk membuat kuis
+        if (categorySigns.isEmpty() || allSigns.size() < 4) {
+            return new ArrayList<>(); // Kembalikan list kosong jika data tidak cukup
         }
-    }
 
-    // Metode utama untuk menghasilkan daftar pertanyaan
-    public static List<QuizQuestion> generateQuestions(Context context, int numberOfQuestions) {
-        List<QuizData> allQuizData = loadQuizData(context);
-        if (allQuizData.size() < 4) {
-            return new ArrayList<>(); // Tidak cukup data untuk membuat kuis
-        }
-
-        Collections.shuffle(allQuizData);
+        // Acak urutan pertanyaan dari kategori yang dipilih
+        Collections.shuffle(categorySigns);
 
         List<QuizQuestion> questions = new ArrayList<>();
-        for (int i = 0; i < numberOfQuestions && i < allQuizData.size(); i++) {
-            QuizData currentData = allQuizData.get(i);
-            String correctAnswer = currentData.word;
-            String gifUrl = currentData.url;
+        // Buat pertanyaan sejumlah yang diminta atau sebanyak data yang ada
+        for (int i = 0; i < numberOfQuestions && i < categorySigns.size(); i++) {
+            Sign currentSign = categorySigns.get(i);
+            String correctAnswer = currentSign.word;
+            String gifUrl = currentSign.gifUrl;
 
-            // Siapkan 4 pilihan jawaban
+            // Siapkan 4 pilihan jawaban, dimulai dengan jawaban yang benar
             List<String> options = new ArrayList<>();
             options.add(correctAnswer);
 
-            // Ambil 3 jawaban salah secara acak
-            List<QuizData> tempWrongAnswers = new ArrayList<>(allQuizData);
-            tempWrongAnswers.remove(i); // Hapus jawaban benar dari daftar
-            Collections.shuffle(tempWrongAnswers);
+            // Buat kumpulan jawaban salah yang tidak mengandung jawaban benar
+            List<Sign> wrongAnswerPool = new ArrayList<>(allSigns);
+            wrongAnswerPool.removeIf(sign -> sign.word.equals(correctAnswer));
+            Collections.shuffle(wrongAnswerPool);
 
-            for (int j = 0; j < 3; j++) {
-                options.add(tempWrongAnswers.get(j).word);
+            // Ambil 3 jawaban salah secara acak
+            for (int j = 0; j < 3 && j < wrongAnswerPool.size(); j++) {
+                options.add(wrongAnswerPool.get(j).word);
             }
 
-            // Acak urutan pilihan jawaban
+            // Acak urutan dari 4 pilihan jawaban tersebut
             Collections.shuffle(options);
             questions.add(new QuizQuestion(gifUrl, correctAnswer, options));
         }
 
         return questions;
-    }
-
-    // Metode untuk membaca file dari folder assets
-    private static List<QuizData> loadQuizData(Context context) {
-        List<QuizData> dataList = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open("GestureLearnGifList.txt")))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 2) {
-                    dataList.add(new QuizData(parts[0], parts[1]));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return dataList;
     }
 }

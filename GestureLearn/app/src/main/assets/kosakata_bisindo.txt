@@ -1,5 +1,5 @@
 adik,https://gesturelearngifs123.blob.core.windows.net/bisindo-gifs/adik.gif
-agustua,https://gesturelearngifs123.blob.core.windows.net/bisindo-gifs/agustua.gif
+agustus,https://gesturelearngifs123.blob.core.windows.net/bisindo-gifs/agustua.gif
 alpukat,https://gesturelearngifs123.blob.core.windows.net/bisindo-gifs/alpukat.gif
 anggur,https://gesturelearngifs123.blob.core.windows.net/bisindo-gifs/anggur.gif
 anjing,https://gesturelearngifs123.blob.core.windows.net/bisindo-gifs/anjing.gif

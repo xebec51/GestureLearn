@@ -9,6 +9,7 @@ import com.example.gesturelearn.R;
 import com.example.gesturelearn.activity.fragment.HomeFragment;
 import com.example.gesturelearn.activity.fragment.KuisFragment;
 import com.example.gesturelearn.activity.fragment.ProfileFragment;
+import com.example.gesturelearn.data.AppDatabase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AppDatabase.getDatabase(getApplicationContext());
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);

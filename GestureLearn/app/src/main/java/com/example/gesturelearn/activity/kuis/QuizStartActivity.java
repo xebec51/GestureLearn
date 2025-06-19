@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
-
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.gesturelearn.R;
 
 public class QuizStartActivity extends AppCompatActivity {
+
+    private String quizCategory;
+    private String quizTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,17 +20,26 @@ public class QuizStartActivity extends AppCompatActivity {
 
         ImageButton btnBack = findViewById(R.id.btn_back);
         Button btnStartQuiz = findViewById(R.id.btn_start_quiz);
+        TextView tvQuizTitle = findViewById(R.id.tv_quiz_title);
 
-        // Listener untuk tombol kembali
-        btnBack.setOnClickListener(v -> {
-            finish(); // Menutup activity ini dan kembali ke layar sebelumnya
-        });
+        // Ambil kategori dan judul dari Intent
+        quizCategory = getIntent().getStringExtra("QUIZ_CATEGORY");
+        quizTitle = getIntent().getStringExtra("QUIZ_TITLE");
+
+        // Set judul halaman sesuai kuis yang dipilih
+        if (quizTitle != null) {
+            tvQuizTitle.setText(quizTitle);
+        }
+
+        btnBack.setOnClickListener(v -> finish());
 
         btnStartQuiz.setOnClickListener(v -> {
-            // Ganti Toast dengan Intent ke QuizQuestionActivity
             Intent intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
+            // Teruskan kategori ke activity pertanyaan
+            intent.putExtra("QUIZ_CATEGORY", quizCategory);
+            intent.putExtra("QUIZ_TITLE", quizTitle); // Teruskan juga judulnya
             startActivity(intent);
-            finish(); // Tutup activity ini agar tidak bisa kembali
+            finish();
         });
     }
 }

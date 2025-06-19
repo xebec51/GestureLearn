@@ -8,23 +8,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import com.bumptech.glide.Glide;
 import com.example.gesturelearn.R;
+import com.example.gesturelearn.data.AppDatabase;
+import com.example.gesturelearn.data.SignDao;
 import com.example.gesturelearn.model.QuizQuestion;
 import com.example.gesturelearn.utils.QuizGenerator;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class QuizQuestionActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Variabel untuk UI
-    private TextView tvQuestionNumber, tvScore;
+    private TextView tvQuestionNumber, tvScore, tvKuisCategory;
     private ImageView ivQuizGif;
     private Button btnOption1, btnOption2, btnOption3, btnOption4, btnNext;
     private ImageButton btnCloseQuiz;
@@ -34,29 +31,39 @@ public class QuizQuestionActivity extends AppCompatActivity implements View.OnCl
     private int currentQuestionIndex = 0;
     private int score = 0;
     private boolean answerSelected = false;
-    private Button selectedButton = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_question);
 
-        // Inisialisasi semua view
         initViews();
 
-        // Generate 10 pertanyaan kuis
-        questionList = QuizGenerator.generateQuestions(this, 10);
+        // Ambil kategori dari intent
+        String category = getIntent().getStringExtra("QUIZ_CATEGORY");
+        String title = getIntent().getStringExtra("QUIZ_TITLE");
+        if (category == null) {
+            category = "KOSAKATA"; // Default jika terjadi kesalahan
+        }
+        if (title != null) {
+            tvKuisCategory.setText(title);
+        }
 
-        if (questionList.isEmpty()) {
+        // Dapatkan akses ke database (DAO)
+        SignDao signDao = AppDatabase.getDatabase(this).signDao();
+
+        // Buat pertanyaan dari database
+        questionList = QuizGenerator.generateQuestions(signDao, category, 10);
+
+        if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Gagal memuat data kuis.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // Tampilkan pertanyaan pertama
         displayQuestion();
 
-        // Set listener untuk semua tombol yang bisa diklik
+        // Set listener
         btnOption1.setOnClickListener(this);
         btnOption2.setOnClickListener(this);
         btnOption3.setOnClickListener(this);
@@ -75,30 +82,21 @@ public class QuizQuestionActivity extends AppCompatActivity implements View.OnCl
         btnOption4 = findViewById(R.id.btn_option4);
         btnNext = findViewById(R.id.btn_next);
         btnCloseQuiz = findViewById(R.id.btn_close_quiz);
+        tvKuisCategory = findViewById(R.id.tv_kuis_category);
     }
 
+    // ... Sisa metode (displayQuestion, checkAnswer, dll) tidak perlu diubah,
+    // karena sudah dirancang untuk bekerja dengan objek QuizQuestion.
+    // Salin sisa metode dari kode sebelumnya atau biarkan seperti apa adanya.
+
     private void displayQuestion() {
-        // Reset tampilan sebelum menampilkan soal baru
         resetOptionsUI();
         answerSelected = false;
-        selectedButton = null;
         btnNext.setVisibility(View.GONE);
-
-        // Ambil data pertanyaan saat ini
         QuizQuestion currentQuestion = questionList.get(currentQuestionIndex);
-
-        // Update UI dengan data pertanyaan baru
         tvQuestionNumber.setText("Soal " + (currentQuestionIndex + 1));
         tvScore.setText(score + " Skor");
-
-        // Muat GIF menggunakan Glide
-        Glide.with(this)
-                .asGif()
-                .load(currentQuestion.getGifUrl())
-                .placeholder(R.drawable.logo_splash) // Gambar sementara saat loading
-                .into(ivQuizGif);
-
-        // Set teks pada tombol pilihan jawaban
+        Glide.with(this).asGif().load(currentQuestion.getGifUrl()).placeholder(R.drawable.logo_splash).into(ivQuizGif);
         List<String> options = currentQuestion.getOptions();
         btnOption1.setText(options.get(0));
         btnOption2.setText(options.get(1));
@@ -107,20 +105,12 @@ public class QuizQuestionActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void resetOptionsUI() {
-        btnOption1.setBackgroundResource(R.drawable.background_answer_default);
-        btnOption2.setBackgroundResource(R.drawable.background_answer_default);
-        btnOption3.setBackgroundResource(R.drawable.background_answer_default);
-        btnOption4.setBackgroundResource(R.drawable.background_answer_default);
-
-        btnOption1.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
-        btnOption2.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
-        btnOption3.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
-        btnOption4.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
-
-        btnOption1.setEnabled(true);
-        btnOption2.setEnabled(true);
-        btnOption3.setEnabled(true);
-        btnOption4.setEnabled(true);
+        Button[] buttons = {btnOption1, btnOption2, btnOption3, btnOption4};
+        for (Button btn : buttons) {
+            btn.setBackgroundResource(R.drawable.background_answer_default);
+            btn.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+            btn.setEnabled(true);
+        }
     }
 
     @Override
@@ -128,13 +118,12 @@ public class QuizQuestionActivity extends AppCompatActivity implements View.OnCl
         int viewId = v.getId();
         if (viewId == R.id.btn_option1 || viewId == R.id.btn_option2 || viewId == R.id.btn_option3 || viewId == R.id.btn_option4) {
             if (!answerSelected) {
-                selectedButton = (Button) v;
-                checkAnswer(selectedButton);
+                checkAnswer((Button) v);
             }
         } else if (viewId == R.id.btn_next) {
             handleNextButton();
         } else if (viewId == R.id.btn_close_quiz) {
-            finish(); // Keluar dari kuis
+            finish();
         }
     }
 
@@ -146,19 +135,14 @@ public class QuizQuestionActivity extends AppCompatActivity implements View.OnCl
         btnOption4.setEnabled(false);
 
         String correctAnswer = questionList.get(currentQuestionIndex).getCorrectAnswer();
-        String selectedAnswer = selectedOption.getText().toString();
-
-        if (selectedAnswer.equals(correctAnswer)) {
-            // Jawaban benar
+        if (selectedOption.getText().toString().equals(correctAnswer)) {
             score += 10;
             tvScore.setText(score + " Skor");
             selectedOption.setBackgroundResource(R.drawable.background_answer_correct);
             selectedOption.setTextColor(ContextCompat.getColor(this, R.color.white));
         } else {
-            // Jawaban salah
             selectedOption.setBackgroundResource(R.drawable.background_answer_wrong);
             selectedOption.setTextColor(ContextCompat.getColor(this, R.color.white));
-            // Tampilkan jawaban yang benar
             showCorrectAnswer();
         }
         btnNext.setVisibility(View.VISIBLE);
@@ -166,32 +150,24 @@ public class QuizQuestionActivity extends AppCompatActivity implements View.OnCl
 
     private void showCorrectAnswer() {
         String correctAnswer = questionList.get(currentQuestionIndex).getCorrectAnswer();
-        if (btnOption1.getText().toString().equals(correctAnswer)) {
-            btnOption1.setBackgroundResource(R.drawable.background_answer_correct);
-            btnOption1.setTextColor(ContextCompat.getColor(this, R.color.white));
-        } else if (btnOption2.getText().toString().equals(correctAnswer)) {
-            btnOption2.setBackgroundResource(R.drawable.background_answer_correct);
-            btnOption2.setTextColor(ContextCompat.getColor(this, R.color.white));
-        } else if (btnOption3.getText().toString().equals(correctAnswer)) {
-            btnOption3.setBackgroundResource(R.drawable.background_answer_correct);
-            btnOption3.setTextColor(ContextCompat.getColor(this, R.color.white));
-        } else if (btnOption4.getText().toString().equals(correctAnswer)) {
-            btnOption4.setBackgroundResource(R.drawable.background_answer_correct);
-            btnOption4.setTextColor(ContextCompat.getColor(this, R.color.white));
+        Button[] buttons = {btnOption1, btnOption2, btnOption3, btnOption4};
+        for(Button btn : buttons) {
+            if(btn.getText().toString().equals(correctAnswer)){
+                btn.setBackgroundResource(R.drawable.background_answer_correct);
+                btn.setTextColor(ContextCompat.getColor(this, R.color.white));
+            }
         }
     }
 
     private void handleNextButton() {
         currentQuestionIndex++;
         if (currentQuestionIndex < questionList.size()) {
-            // Masih ada soal berikutnya
             displayQuestion();
         } else {
-            // Kuis selesai, pindah ke halaman hasil
             Intent intent = new Intent(this, QuizResultActivity.class);
             intent.putExtra("FINAL_SCORE", score);
             startActivity(intent);
-            finish(); // Tutup activity pertanyaan
+            finish();
         }
     }
 }
