@@ -10,27 +10,42 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.gesturelearn.R;
 import com.example.gesturelearn.data.AppDatabase;
 import com.example.gesturelearn.data.SignDao;
+import com.example.gesturelearn.model.IQuizQuestion;
 import com.example.gesturelearn.model.QuizQuestion;
+import com.example.gesturelearn.model.ReverseQuizQuestion;
+import com.example.gesturelearn.model.Sign;
 import com.example.gesturelearn.utils.QuizGenerator;
 
 import java.util.List;
 
 public class AlphabetQuizActivity extends AppCompatActivity implements View.OnClickListener {
 
-    // Ganti Button dengan TextView untuk pilihan jawaban
-    private TextView tvOption1, tvOption2, tvOption3, tvOption4;
-    private TextView tvQuestionNumber, tvScore, tvKuisCategory;
-    private ImageView ivQuizGif;
+    // UI Umum
+    private TextView tvScore, tvKuisCategory;
     private Button btnNext;
     private ImageButton btnCloseQuiz;
 
-    private List<QuizQuestion> questionList;
+    // UI untuk Soal Standar (Tebak Huruf)
+    private CardView cardStandardQuestion;
+    private TextView tvQuestionNumberStandard;
+    private ImageView ivQuizGif;
+    private TextView[] standardOptions;
+
+    // UI untuk Soal Terbalik (Tebak GIF)
+    private CardView cardReverseQuestion;
+    private TextView tvQuestionNumberReverse;
+    private TextView tvQuestionTextReverse;
+    private ImageView[] reverseOptions;
+
+    // Data Kuis
+    private List<IQuizQuestion> questionList;
     private int currentQuestionIndex = 0;
     private int score = 0;
     private boolean answerSelected = false;
@@ -41,119 +56,163 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_alphabet_quiz);
 
         initViews();
+        setListeners();
 
         String category = getIntent().getStringExtra("QUIZ_CATEGORY");
         String title = getIntent().getStringExtra("QUIZ_TITLE");
 
         if (title != null) tvKuisCategory.setText(title);
-        if (category == null) category = "ABJAD_BISINDO";
+        if (category == null) category = "ABJAD_BISINDO"; // Default
 
         SignDao signDao = AppDatabase.getDatabase(this).signDao();
-        questionList = QuizGenerator.generateQuestions(signDao, category, 10);
+        // Menggunakan generator baru untuk kuis campuran
+        questionList = QuizGenerator.generateMixedAlphabetQuiz(signDao, category, 10);
 
-        if (questionList.isEmpty()) {
+        if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Gagal memuat data kuis.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         displayQuestion();
-        setListeners();
     }
 
     private void initViews() {
-        tvQuestionNumber = findViewById(R.id.tv_question_number);
+        // Init UI Umum
         tvScore = findViewById(R.id.tv_score);
-        ivQuizGif = findViewById(R.id.iv_quiz_gif);
+        tvKuisCategory = findViewById(R.id.tv_kuis_category);
         btnNext = findViewById(R.id.btn_next);
         btnCloseQuiz = findViewById(R.id.btn_close_quiz);
-        tvKuisCategory = findViewById(R.id.tv_kuis_category);
-        tvOption1 = findViewById(R.id.option1);
-        tvOption2 = findViewById(R.id.option2);
-        tvOption3 = findViewById(R.id.option3);
-        tvOption4 = findViewById(R.id.option4);
+
+        // Init UI Standar
+        cardStandardQuestion = findViewById(R.id.card_standard_question);
+        tvQuestionNumberStandard = findViewById(R.id.tv_question_number_standard);
+        ivQuizGif = findViewById(R.id.iv_quiz_gif);
+        standardOptions = new TextView[]{
+                findViewById(R.id.option1_standard),
+                findViewById(R.id.option2_standard),
+                findViewById(R.id.option3_standard),
+                findViewById(R.id.option4_standard)
+        };
+
+        // Init UI Terbalik
+        cardReverseQuestion = findViewById(R.id.card_reverse_question);
+        tvQuestionNumberReverse = findViewById(R.id.tv_question_number_reverse);
+        tvQuestionTextReverse = findViewById(R.id.tv_question_text_reverse);
+        reverseOptions = new ImageView[]{
+                findViewById(R.id.option1_reverse),
+                findViewById(R.id.option2_reverse),
+                findViewById(R.id.option3_reverse),
+                findViewById(R.id.option4_reverse)
+        };
     }
 
     private void setListeners() {
-        tvOption1.setOnClickListener(this);
-        tvOption2.setOnClickListener(this);
-        tvOption3.setOnClickListener(this);
-        tvOption4.setOnClickListener(this);
         btnNext.setOnClickListener(this);
         btnCloseQuiz.setOnClickListener(this);
+        for (TextView option : standardOptions) {
+            option.setOnClickListener(this);
+        }
+        for (ImageView option : reverseOptions) {
+            option.setOnClickListener(this);
+        }
     }
-
-    // Metode lain (displayQuestion, checkAnswer, dll.) disalin dari QuizQuestionActivity
-    // namun dengan sedikit modifikasi untuk menggunakan TextView.
 
     private void displayQuestion() {
-        resetOptionsUI();
+        resetAllUI();
         answerSelected = false;
         btnNext.setVisibility(View.GONE);
-        QuizQuestion currentQuestion = questionList.get(currentQuestionIndex);
-        tvQuestionNumber.setText("Soal " + (currentQuestionIndex + 1));
+
+        IQuizQuestion currentQuestion = questionList.get(currentQuestionIndex);
+        String questionNumberText = "Soal " + (currentQuestionIndex + 1);
         tvScore.setText(score + " Skor");
-        Glide.with(this).asGif().load(currentQuestion.getGifUrl()).placeholder(R.drawable.logo_splash).into(ivQuizGif);
-        List<String> options = currentQuestion.getOptions();
-        tvOption1.setText(options.get(0));
-        tvOption2.setText(options.get(1));
-        tvOption3.setText(options.get(2));
-        tvOption4.setText(options.get(3));
+
+        if (currentQuestion.getQuestionType().equals("STANDARD")) {
+            displayStandardQuestion((QuizQuestion) currentQuestion, questionNumberText);
+        } else if (currentQuestion.getQuestionType().equals("REVERSE")) {
+            displayReverseQuestion((ReverseQuizQuestion) currentQuestion, questionNumberText);
+        }
     }
 
-    private void resetOptionsUI() {
-        TextView[] options = {tvOption1, tvOption2, tvOption3, tvOption4};
-        for (TextView option : options) {
-            option.setBackgroundResource(R.drawable.background_alphabet_option_default);
-            option.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
-            option.setEnabled(true);
+    private void displayStandardQuestion(QuizQuestion question, String questionNumberText) {
+        cardStandardQuestion.setVisibility(View.VISIBLE);
+        cardReverseQuestion.setVisibility(View.GONE);
+        tvQuestionNumberStandard.setText(questionNumberText);
+
+        Glide.with(this).asGif().load(question.getGifUrl()).placeholder(R.drawable.logo_splash).into(ivQuizGif);
+        List<String> options = question.getOptions();
+        for (int i = 0; i < standardOptions.length; i++) {
+            standardOptions[i].setText(options.get(i));
+        }
+    }
+
+    private void displayReverseQuestion(ReverseQuizQuestion question, String questionNumberText) {
+        cardReverseQuestion.setVisibility(View.VISIBLE);
+        cardStandardQuestion.setVisibility(View.GONE);
+        tvQuestionNumberReverse.setText(questionNumberText);
+        tvQuestionTextReverse.setText("Yang manakah isyarat huruf " + question.getCorrectAnswer().word + "?");
+
+        List<Sign> options = question.getOptions();
+        for (int i = 0; i < reverseOptions.length; i++) {
+            reverseOptions[i].setTag(options.get(i)); // Simpan data di tag
+            Glide.with(this)
+                    .asGif()
+                    .load(options.get(i).gifUrl)
+                    .placeholder(R.drawable.logo_splash)
+                    .into(reverseOptions[i]);
         }
     }
 
     @Override
     public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.option1 || id == R.id.option2 || id == R.id.option3 || id == R.id.option4) {
-            if (!answerSelected) {
-                checkAnswer((TextView) v);
-            }
-        } else if (id == R.id.btn_next) {
-            handleNextButton();
-        } else if (id == R.id.btn_close_quiz) {
-            finish();
+        if (answerSelected) {
+            if (v.getId() == R.id.btn_next) handleNextButton();
+            return;
         }
+
+        IQuizQuestion currentQuestion = questionList.get(currentQuestionIndex);
+        if (currentQuestion.getQuestionType().equals("STANDARD")) {
+            checkStandardAnswer((TextView) v);
+        } else if (currentQuestion.getQuestionType().equals("REVERSE")) {
+            checkReverseAnswer((ImageView) v);
+        }
+
+        if (v.getId() == R.id.btn_close_quiz) finish();
     }
 
-    private void checkAnswer(TextView selectedOption) {
+    private void checkStandardAnswer(TextView selectedOption) {
         answerSelected = true;
-        tvOption1.setEnabled(false);
-        tvOption2.setEnabled(false);
-        tvOption3.setEnabled(false);
-        tvOption4.setEnabled(false);
+        setStandardOptionsEnabled(false);
+        QuizQuestion currentQuestion = (QuizQuestion) questionList.get(currentQuestionIndex);
+        String correctAnswer = currentQuestion.getCorrectAnswer();
 
-        String correctAnswer = questionList.get(currentQuestionIndex).getCorrectAnswer();
         if (selectedOption.getText().toString().equals(correctAnswer)) {
             score += 10;
-            tvScore.setText(score + " Skor");
             selectedOption.setBackgroundResource(R.drawable.background_alphabet_option_correct);
             selectedOption.setTextColor(ContextCompat.getColor(this, R.color.white));
         } else {
             selectedOption.setBackgroundResource(R.drawable.background_alphabet_option_wrong);
             selectedOption.setTextColor(ContextCompat.getColor(this, R.color.white));
-            showCorrectAnswer();
+            showCorrectStandardAnswer(correctAnswer);
         }
         btnNext.setVisibility(View.VISIBLE);
     }
 
-    private void showCorrectAnswer() {
-        String correctAnswer = questionList.get(currentQuestionIndex).getCorrectAnswer();
-        TextView[] options = {tvOption1, tvOption2, tvOption3, tvOption4};
-        for (TextView option : options) {
-            if (option.getText().toString().equals(correctAnswer)) {
-                option.setBackgroundResource(R.drawable.background_alphabet_option_correct);
-                option.setTextColor(ContextCompat.getColor(this, R.color.white));
-            }
+    private void checkReverseAnswer(ImageView selectedOption) {
+        answerSelected = true;
+        setReverseOptionsEnabled(false);
+        ReverseQuizQuestion currentQuestion = (ReverseQuizQuestion) questionList.get(currentQuestionIndex);
+        Sign correctAnswer = currentQuestion.getCorrectAnswer();
+        Sign selectedAnswer = (Sign) selectedOption.getTag();
+
+        if (selectedAnswer.word.equals(correctAnswer.word)) {
+            score += 10;
+            selectedOption.setBackgroundResource(R.drawable.background_answer_correct);
+        } else {
+            selectedOption.setBackgroundResource(R.drawable.background_answer_wrong);
+            showCorrectReverseAnswer(correctAnswer);
         }
+        btnNext.setVisibility(View.VISIBLE);
     }
 
     private void handleNextButton() {
@@ -165,6 +224,49 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
             intent.putExtra("FINAL_SCORE", score);
             startActivity(intent);
             finish();
+        }
+    }
+
+    // --- Helper Methods to Reset and Show Correct Answers ---
+
+    private void resetAllUI() {
+        // Reset Standard UI
+        for (TextView option : standardOptions) {
+            option.setBackgroundResource(R.drawable.background_alphabet_option_default);
+            option.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+            option.setEnabled(true);
+        }
+        // Reset Reverse UI
+        for (ImageView option : reverseOptions) {
+            option.setBackgroundResource(R.drawable.background_answer_default);
+            option.setEnabled(true);
+        }
+    }
+
+    private void setStandardOptionsEnabled(boolean enabled) {
+        for (TextView option : standardOptions) option.setEnabled(enabled);
+    }
+
+    private void setReverseOptionsEnabled(boolean enabled) {
+        for (ImageView option : reverseOptions) option.setEnabled(enabled);
+    }
+
+    private void showCorrectStandardAnswer(String correctAnswer) {
+        for (TextView option : standardOptions) {
+            if (option.getText().toString().equals(correctAnswer)) {
+                option.setBackgroundResource(R.drawable.background_alphabet_option_correct);
+                option.setTextColor(ContextCompat.getColor(this, R.color.white));
+            }
+        }
+    }
+
+    private void showCorrectReverseAnswer(Sign correctAnswer) {
+        for (ImageView option : reverseOptions) {
+            Sign sign = (Sign) option.getTag();
+            if (sign.word.equals(correctAnswer.word)) {
+                option.setBackgroundResource(R.drawable.background_answer_correct);
+                break;
+            }
         }
     }
 }

@@ -2,7 +2,7 @@ package com.example.gesturelearn.model;
 
 import java.util.List;
 
-public class QuizQuestion {
+public class QuizQuestion implements IQuizQuestion {
     private final String gifUrl;
     private final String correctAnswer;
     private final List<String> options;
@@ -23,5 +23,10 @@ public class QuizQuestion {
 
     public List<String> getOptions() {
         return options;
+    }
+
+    @Override
+    public String getQuestionType() {
+        return "STANDARD";
     }
 }

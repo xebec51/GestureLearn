@@ -1,3 +1,4 @@
+// File: D:\GitHub\GestureLearn\GestureLearn\app\src\main\java\com\example\gesturelearn\activity\kuis\QuizStartActivity.java
 package com.example.gesturelearn.activity.kuis;
 
 import android.content.Intent;
@@ -24,11 +25,9 @@ public class QuizStartActivity extends AppCompatActivity {
         Button btnStartQuiz = findViewById(R.id.btn_start_quiz);
         TextView tvQuizTitle = findViewById(R.id.tv_quiz_title);
 
-        // Ambil kategori dan judul dari Intent
         quizCategory = getIntent().getStringExtra("QUIZ_CATEGORY");
         quizTitle = getIntent().getStringExtra("QUIZ_TITLE");
 
-        // Set judul halaman sesuai kuis yang dipilih
         if (quizTitle != null) {
             tvQuizTitle.setText(quizTitle);
         }
@@ -38,13 +37,13 @@ public class QuizStartActivity extends AppCompatActivity {
         btnStartQuiz.setOnClickListener(v -> {
             Intent intent;
 
-            // Logika untuk memilih Activity Kuis yang tepat
-            if (quizCategory.equals("KOSAKATA")) {
+            if ("KOSAKATA".equals(quizCategory)) {
                 intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
-            } else if (quizCategory.equals("ABJAD_SIBI")) {
-                intent = new Intent(QuizStartActivity.this, ReverseQuizActivity.class);
-            } else { // Asumsikan sisanya adalah ABJAD_BISINDO
+            } else if ("ABJAD_SIBI".equals(quizCategory) || "ABJAD_BISINDO".equals(quizCategory)) {
                 intent = new Intent(QuizStartActivity.this, AlphabetQuizActivity.class);
+            } else {
+                Toast.makeText(this, "Kategori kuis tidak dikenal.", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             intent.putExtra("QUIZ_CATEGORY", quizCategory);

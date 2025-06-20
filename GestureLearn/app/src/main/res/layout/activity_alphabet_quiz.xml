@@ -70,18 +70,20 @@
         app:layout_constraintTop_toBottomOf="@id/btn_close_quiz" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_question"
+        android:id="@+id/card_standard_question"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:visibility="gone"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,11 +92,11 @@
             android:padding="24dp">
 
             <TextView
-                android:id="@+id/tv_question_number"
+                android:id="@+id/tv_question_number_standard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Soal 1"
+                tools:text="Soal 1"
                 android:textColor="@color/text_primary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -123,32 +125,106 @@
                 android:columnCount="2">
 
                 <TextView
-                    android:id="@+id/option1"
+                    android:id="@+id/option1_standard"
                     style="@style/AlphabetQuizOption"
-                    tools:text="A"/>
-
+                    tools:text="A" />
                 <TextView
-                    android:id="@+id/option2"
+                    android:id="@+id/option2_standard"
                     style="@style/AlphabetQuizOption"
                     android:layout_marginStart="24dp"
-                    tools:text="B"/>
-
+                    tools:text="B" />
                 <TextView
-                    android:id="@+id/option3"
+                    android:id="@+id/option3_standard"
                     style="@style/AlphabetQuizOption"
                     android:layout_marginTop="24dp"
-                    tools:text="C"/>
-
+                    tools:text="C" />
                 <TextView
-                    android:id="@+id/option4"
+                    android:id="@+id/option4_standard"
                     style="@style/AlphabetQuizOption"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="24dp"
-                    tools:text="D"/>
-
+                    tools:text="D" />
             </GridLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_reverse_question"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/tv_question_number_reverse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                tools:text="Soal 2"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_question_text_reverse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_home_card"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="12dp"
+                tools:text="Yang manakah isyarat huruf L?"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:columnCount="2">
+
+                <ImageView
+                    android:id="@+id/option1_reverse"
+                    style="@style/ReverseQuizOption" />
+                <ImageView
+                    android:id="@+id/option2_reverse"
+                    style="@style/ReverseQuizOption"
+                    android:layout_marginStart="16dp" />
+                <ImageView
+                    android:id="@+id/option3_reverse"
+                    style="@style/ReverseQuizOption"
+                    android:layout_marginTop="16dp" />
+                <ImageView
+                    android:id="@+id/option4_reverse"
+                    style="@style/ReverseQuizOption"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp" />
+            </GridLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_cards_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="card_standard_question,card_reverse_question" />
 
     <Button
         android:id="@+id/btn_next"
@@ -160,8 +236,9 @@
         android:paddingEnd="48dp"
         android:text="Next"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@id/card_question"
-        app:layout_constraintStart_toStartOf="@id/card_question"
-        app:layout_constraintTop_toBottomOf="@id/card_question" />
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_cards_bottom" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

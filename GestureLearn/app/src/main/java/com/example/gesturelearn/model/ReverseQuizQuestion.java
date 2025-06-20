@@ -2,7 +2,7 @@ package com.example.gesturelearn.model;
 
 import java.util.List;
 
-public class ReverseQuizQuestion {
+public class ReverseQuizQuestion implements IQuizQuestion {
     private final Sign correctAnswer;
     private final List<Sign> options;
 
@@ -17,5 +17,10 @@ public class ReverseQuizQuestion {
 
     public List<Sign> getOptions() {
         return options;
+    }
+
+    @Override
+    public String getQuestionType() {
+        return "REVERSE";
     }
 }
