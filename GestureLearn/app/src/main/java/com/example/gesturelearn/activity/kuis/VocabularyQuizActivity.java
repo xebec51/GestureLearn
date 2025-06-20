@@ -59,6 +59,14 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
         initViews();
         setListeners();
 
+        androidx.activity.OnBackPressedCallback callback = new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitConfirmationDialog();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
+
         // Menggunakan generator baru untuk kuis kosakata campuran
         SignDao signDao = AppDatabase.getDatabase(this).signDao();
         questionList = QuizGenerator.generateMixedVocabularyQuiz(signDao, 10);
@@ -162,10 +170,13 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
             handleNextButton();
             return;
         }
+
         if (v.getId() == R.id.btn_close_quiz) {
-            finish();
+            // Ganti finish(); dengan pemanggilan dialog
+            showExitConfirmationDialog();
             return;
         }
+
         if (answerSelected) return;
 
         IQuizQuestion currentQuestion = questionList.get(currentQuestionIndex);
@@ -270,5 +281,31 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
                 break;
             }
         }
+    }
+
+    private void showExitConfirmationDialog() {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+
+        dialog.setContentView(R.layout.dialog_exit_confirmation);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        Button btnYes = dialog.findViewById(R.id.btn_dialog_yes);
+        Button btnNo = dialog.findViewById(R.id.btn_dialog_no);
+
+        btnYes.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+
+        btnNo.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }

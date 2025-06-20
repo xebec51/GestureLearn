@@ -58,6 +58,14 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
         initViews();
         setListeners();
 
+        androidx.activity.OnBackPressedCallback callback = new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitConfirmationDialog();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
+
         String category = getIntent().getStringExtra("QUIZ_CATEGORY");
         String title = getIntent().getStringExtra("QUIZ_TITLE");
 
@@ -177,7 +185,11 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
             checkReverseAnswer((ImageView) v);
         }
 
-        if (v.getId() == R.id.btn_close_quiz) finish();
+        if (v.getId() == R.id.btn_close_quiz) {
+            // Ganti finish(); dengan pemanggilan dialog
+            showExitConfirmationDialog();
+            return;
+        }
     }
 
     private void checkStandardAnswer(TextView selectedOption) {
@@ -268,5 +280,31 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
                 break;
             }
         }
+    }
+
+    private void showExitConfirmationDialog() {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+
+        dialog.setContentView(R.layout.dialog_exit_confirmation);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        Button btnYes = dialog.findViewById(R.id.btn_dialog_yes);
+        Button btnNo = dialog.findViewById(R.id.btn_dialog_no);
+
+        btnYes.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+
+        btnNo.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }
