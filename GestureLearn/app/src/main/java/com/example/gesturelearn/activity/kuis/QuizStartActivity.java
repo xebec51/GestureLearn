@@ -38,7 +38,7 @@ public class QuizStartActivity extends AppCompatActivity {
             Intent intent;
 
             if ("KOSAKATA".equals(quizCategory)) {
-                intent = new Intent(QuizStartActivity.this, QuizQuestionActivity.class);
+                intent = new Intent(QuizStartActivity.this, VocabularyQuizActivity.class);
             } else if ("ABJAD_SIBI".equals(quizCategory) || "ABJAD_BISINDO".equals(quizCategory)) {
                 intent = new Intent(QuizStartActivity.this, AlphabetQuizActivity.class);
             } else {

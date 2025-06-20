@@ -38,7 +38,7 @@ public class QuizResultActivity extends AppCompatActivity {
         // Set listener untuk tombol
         btnRetry.setOnClickListener(v -> {
             // Mulai lagi kuis dari awal
-            Intent intent = new Intent(QuizResultActivity.this, QuizQuestionActivity.class);
+            Intent intent = new Intent(QuizResultActivity.this, VocabularyQuizActivity.class);
             startActivity(intent);
             finish();
         });

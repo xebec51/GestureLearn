@@ -150,4 +150,61 @@ public class QuizGenerator {
 
         return mixedQuestions;
     }
+
+    public static List<IQuizQuestion> generateMixedVocabularyQuiz(SignDao signDao, int totalQuestions) {
+        // Kategori sudah pasti "KOSAKATA"
+        List<Sign> categorySigns = signDao.getSignsByCategory("KOSAKATA");
+        if (categorySigns.size() < 4) {
+            return new ArrayList<>(); // Tidak cukup data
+        }
+        Collections.shuffle(categorySigns);
+
+        List<IQuizQuestion> mixedQuestions = new ArrayList<>();
+        int standardQuestionsCount = totalQuestions / 2;
+
+        int availableSigns = categorySigns.size();
+
+        // Buat 5 soal standar (Tebak Kata dari GIF)
+        for (int i = 0; i < standardQuestionsCount && i < availableSigns; i++) {
+            Sign currentSign = categorySigns.get(i);
+            String correctAnswer = currentSign.word;
+            String gifUrl = currentSign.gifUrl;
+
+            List<String> options = new ArrayList<>();
+            options.add(correctAnswer);
+
+            List<Sign> wrongAnswerPool = new ArrayList<>(categorySigns);
+            wrongAnswerPool.removeIf(sign -> sign.word.equals(correctAnswer));
+            Collections.shuffle(wrongAnswerPool);
+
+            for (int j = 0; j < 3 && j < wrongAnswerPool.size(); j++) {
+                options.add(wrongAnswerPool.get(j).word);
+            }
+            Collections.shuffle(options);
+            mixedQuestions.add(new QuizQuestion(gifUrl, correctAnswer, options));
+        }
+
+        // Buat 5 soal terbalik (Tebak GIF dari Kata)
+        for (int i = standardQuestionsCount; i < totalQuestions && i < availableSigns; i++) {
+            Sign correctAnswer = categorySigns.get(i);
+
+            List<Sign> options = new ArrayList<>();
+            options.add(correctAnswer);
+
+            List<Sign> wrongAnswerPool = new ArrayList<>(categorySigns);
+            wrongAnswerPool.remove(correctAnswer);
+            Collections.shuffle(wrongAnswerPool);
+
+            for (int j = 0; j < 3 && j < wrongAnswerPool.size(); j++) {
+                options.add(wrongAnswerPool.get(j));
+            }
+            Collections.shuffle(options);
+            mixedQuestions.add(new ReverseQuizQuestion(correctAnswer, options));
+        }
+
+        // Acak daftar gabungan untuk urutan yang tidak terduga
+        Collections.shuffle(mixedQuestions);
+
+        return mixedQuestions;
+    }
 }

@@ -30,7 +30,7 @@
             android:name=".activity.kuis.QuizResultActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.kuis.QuizQuestionActivity"
+            android:name=".activity.kuis.VocabularyQuizActivity"
             android:exported="false" />
         <activity
             android:name=".activity.kuis.QuizStartActivity"
