@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:background="@drawable/shape_border_green"
+    android:gravity="center"
+    android:paddingHorizontal="10dp"
+    android:layout_marginTop="10dp">
+
+    <TextView
+        android:id="@+id/tv_abjad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/green"
+        android:textSize="40sp"
+        android:layout_marginTop="4dp"
+        android:text="A"
+        android:textAlignment="center"/>
+</LinearLayout>

@@ -13,6 +13,11 @@ import com.example.gesturelearn.R;
 import com.example.gesturelearn.model.CardItem;
 import java.util.List;
 
+import android.content.Intent;
+import com.example.gesturelearn.activity.learn.LearnAbjadBisindoActivity;
+import com.example.gesturelearn.activity.learn.LearnAbjadSibiActivity;
+import com.example.gesturelearn.activity.learn.LearnKosakataActivity;
+
 public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.CardViewHolder> {
 
     private final List<CardItem> cardItems;
@@ -37,6 +42,25 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.CardVi
         holder.imageView.setImageResource(currentItem.getImageResId());
         holder.titleButton.setText(currentItem.getTitle());
         holder.descriptionTextView.setText(currentItem.getDescription());
+
+        holder.itemView.setOnClickListener(v -> {
+            Context context = holder.itemView.getContext();
+            Intent intent;
+            switch (position) {
+                case 0: // ABJAD BISINDO
+                    intent = new Intent(context, LearnAbjadBisindoActivity.class);
+                    break;
+                case 1: // ABJAD SIBI
+                    intent = new Intent(context, LearnAbjadSibiActivity.class);
+                    break;
+                case 2: // KOSAKATA
+                    intent = new Intent(context, LearnKosakataActivity.class);
+                    break;
+                default:
+                    return; // Tidak melakukan apa-apa jika posisi tidak dikenali
+            }
+            context.startActivity(intent);
+        });
     }
 
     @Override
