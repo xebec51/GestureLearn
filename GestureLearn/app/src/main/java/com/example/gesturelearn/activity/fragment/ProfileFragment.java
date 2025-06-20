@@ -21,6 +21,8 @@ import com.example.gesturelearn.activity.ChangePasswordActivity;
 import com.example.gesturelearn.activity.EditProfileActivity;
 import com.example.gesturelearn.activity.auth.LoginActivity;
 import com.example.gesturelearn.data.DatabaseHelper;
+import android.content.SharedPreferences;
+import android.content.Context;
 
 public class ProfileFragment extends Fragment {
 
@@ -105,6 +107,13 @@ public class ProfileFragment extends Fragment {
     }
 
     private void logoutUser() {
+        if (getActivity() != null) {
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("GestureLearnPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+        }
+
         Toast.makeText(getContext(), "Logout berhasil!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

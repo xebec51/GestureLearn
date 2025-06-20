@@ -1,6 +1,7 @@
 package com.example.gesturelearn.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,12 +19,22 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Handler untuk menunda perpindahan ke activity berikutnya
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Buat Intent untuk pindah ke OnboardingActivity
-            Intent intent = new Intent(SplashScreenActivity.this, OnboardingActivity.class);
+            SharedPreferences sharedPreferences = getSharedPreferences("GestureLearnPrefs", MODE_PRIVATE);
+
+            boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+            Intent intent;
+            if (isLoggedIn) {
+                String userEmail = sharedPreferences.getString("userEmail", null);
+                intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                intent.putExtra("userEmail", userEmail);
+            } else {
+                intent = new Intent(SplashScreenActivity.this, OnboardingActivity.class);
+            }
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            // Tutup SplashScreenActivity agar tidak bisa kembali
             finish();
         }, SPLASH_DELAY);
     }

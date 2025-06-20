@@ -13,6 +13,7 @@ import com.example.gesturelearn.R;
 import com.example.gesturelearn.activity.MainActivity;
 import com.example.gesturelearn.data.DatabaseHelper;
 import com.google.android.material.textfield.TextInputEditText;
+import android.content.SharedPreferences;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -52,6 +53,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (isValidUser) {
                     // Jika login berhasil
                     Toast.makeText(LoginActivity.this, "Login berhasil!", Toast.LENGTH_SHORT).show();
+
+                    SharedPreferences sharedPreferences = getSharedPreferences("GestureLearnPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    editor.putBoolean("isLoggedIn", true);
+                    editor.putString("userEmail", email);
+                    editor.apply();
 
                     // Pindah ke MainActivity
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
