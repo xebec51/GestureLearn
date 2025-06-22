@@ -19,4 +19,6 @@
     <color name="greenHint">#759663</color>
 
     <color name="gold">#C9BF97</color>
+
+    <color name="grey">#f3f5f2</color>
 </resources>

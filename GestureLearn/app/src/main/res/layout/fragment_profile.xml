@@ -1,213 +1,280 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".activity.fragment.ProfileFragment">
+    android:fillViewport="true"
+    android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/iv_background"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="270dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/img_profile_background"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/iv_profilePicture"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="95dp"
-        android:padding="3dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/img_profile_default"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-        app:strokeColor="@color/green"
-        app:strokeWidth="4dp" />
-
-    <TextView
-        android:id="@+id/tv_myProfile"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppins_extrabold"
-        android:text="My Profile"
-        android:textColor="@color/green"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_profilePicture" />
+        tools:context=".activity.fragment.ProfileFragment">
 
-    <LinearLayout
-        android:id="@+id/ll_dots"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="@id/tv_myProfile"
-        app:layout_constraintBottom_toBottomOf="@id/tv_myProfile"
-        app:layout_constraintStart_toEndOf="@id/tv_myProfile"
-        android:layout_marginStart="16dp">
-        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
-        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
-        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="@id/tv_myProfile"
-        app:layout_constraintBottom_toBottomOf="@id/tv_myProfile"
-        app:layout_constraintEnd_toStartOf="@id/tv_myProfile"
-        android:layout_marginEnd="16dp">
-        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
-        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
-        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_user_info"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_myProfile"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/iv_background"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_green_border2"
-            android:padding="12dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nama   :"
-                android:textColor="@color/green"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins_bold"/>
-            <TextView
-                android:id="@+id/tv_name_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                tools:text="NUGRAH"
-                android:textColor="@color/green"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins_regular"/>
-        </RelativeLayout>
+            android:layout_height="270dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_profile_background"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_green_border2"
-            android:padding="12dp"
-            android:layout_marginTop="16dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email    :"
-                android:textColor="@color/green"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins_bold"/>
-            <TextView
-                android:id="@+id/tv_email_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                tools:text="anugrahstarlight@gmail.com"
-                android:textColor="@color/green"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins_regular"/>
-        </RelativeLayout>
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_profilePicture"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="95dp"
+            android:padding="3dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_profile_default"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+            app:strokeColor="@color/green"
+            app:strokeWidth="4dp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_green_border2"
-            android:padding="12dp"
-            android:layout_marginTop="16dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Poin      :"
-                android:textColor="@color/green"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins_bold"/>
-            <TextView
-                android:id="@+id/tv_point_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                tools:text="129"
-                android:textColor="@color/green"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins_regular"/>
-        </RelativeLayout>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/ll_buttons"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <Button
-            android:id="@+id/btn_editProfile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/lightGreen"
-            android:fontFamily="@font/poppins_bold"
-            android:paddingVertical="12dp"
-            android:text="Edit Profile"
-            android:textColor="@color/green"
-            android:textSize="16sp"
-            app:cornerRadius="15dp" />
-
-        <Button
-            android:id="@+id/btn_change_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/lightGreen"
-            android:fontFamily="@font/poppins_bold"
-            android:paddingVertical="12dp"
-            android:text="Ubah Password"
-            android:textColor="@color/green"
-            android:textSize="16sp"
-            app:cornerRadius="15dp" />
-
-        <Button
-            android:id="@+id/btn_logout"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_myProfile"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:paddingVertical="12dp"
-            android:text="Logout"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="16sp"
-            app:cornerRadius="15dp"
-            app:strokeColor="@android:color/holo_red_dark"
-            app:strokeWidth="2dp"
-            app:rippleColor="#33D32F2F"/>
-    </LinearLayout>
+            android:fontFamily="@font/poppins_extrabold"
+            android:text="My Profile"
+            android:textColor="@color/green"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_profilePicture" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/ll_dots_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="@id/tv_myProfile"
+            app:layout_constraintBottom_toBottomOf="@id/tv_myProfile"
+            app:layout_constraintEnd_toStartOf="@id/tv_myProfile"
+            android:layout_marginEnd="16dp">
+            <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
+            <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
+            <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_dots_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="@id/tv_myProfile"
+            app:layout_constraintBottom_toBottomOf="@id/tv_myProfile"
+            app:layout_constraintStart_toEndOf="@id/tv_myProfile"
+            android:layout_marginStart="16dp">
+            <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
+            <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" android:layout_marginEnd="8dp"/>
+            <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_circle_green" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_user_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_myProfile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_green_border2"
+                android:padding="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nama   :"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_bold"/>
+                <TextView
+                    android:id="@+id/tv_name_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    tools:text="NUGRAH"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_regular"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_green_border2"
+                android:padding="12dp"
+                android:layout_marginTop="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email    :"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_bold"/>
+                <TextView
+                    android:id="@+id/tv_email_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    tools:text="anugrahstarlight@gmail.com"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_regular"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_green_border2"
+                android:padding="12dp"
+                android:layout_marginTop="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Poin      :"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_bold"/>
+                <TextView
+                    android:id="@+id/tv_point_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    tools:text="129"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_regular"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_weekly_statistic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="@color/grey"
+            app:cardCornerRadius="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_user_info">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/green_circle" />
+
+                    <TextView
+                        android:id="@+id/tv_statistic_user_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Statistik Mingguan"
+                        android:textColor="@color/green"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_statistic_user_xp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:text="129 XP"
+                        android:textColor="@color/green"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/profile_weekly_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/ll_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="24dp"
+            android:paddingBottom="24dp"
+            app:layout_constraintTop_toBottomOf="@id/card_weekly_statistic"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <Button
+                android:id="@+id/btn_editProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/lightGreen"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingVertical="12dp"
+                android:text="Edit Profile"
+                android:textColor="@color/green"
+                android:textSize="16sp"
+                app:cornerRadius="15dp" />
+
+            <Button
+                android:id="@+id/btn_change_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/lightGreen"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingVertical="12dp"
+                android:text="Ubah Password"
+                android:textColor="@color/green"
+                android:textSize="16sp"
+                app:cornerRadius="15dp" />
+
+            <Button
+                android:id="@+id/btn_logout"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingVertical="12dp"
+                android:text="Logout"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp"
+                app:cornerRadius="15dp"
+                app:strokeColor="@android:color/holo_red_dark"
+                app:strokeWidth="2dp"
+                app:rippleColor="#33D32F2F"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

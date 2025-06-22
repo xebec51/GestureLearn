@@ -1,7 +1,10 @@
 package com.example.gesturelearn.activity.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,33 +24,46 @@ import com.example.gesturelearn.activity.ChangePasswordActivity;
 import com.example.gesturelearn.activity.EditProfileActivity;
 import com.example.gesturelearn.activity.auth.LoginActivity;
 import com.example.gesturelearn.data.DatabaseHelper;
-import android.content.SharedPreferences;
-import android.content.Context;
+
+// Impor untuk library Grafik
+import com.example.gesturelearn.utils.ProgressManager;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
+    // Variabel untuk UI yang sudah ada
     private TextView tvNameValue, tvEmailValue, tvPointValue;
     private Button btnEditProfile, btnLogout, btnChangePassword;
+
+    // Variabel BARU untuk Card Statistik
+    private TextView tvStatisticUserXp;
+    private LineChart weeklyChart;
+
     private DatabaseHelper databaseHelper;
     private String userEmail;
+    private final String[] daysOfWeek = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
-    // DIUBAH: Deklarasikan ActivityResultLauncher
     private ActivityResultLauncher<Intent> editProfileLauncher;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // DIUBAH: Inisialisasi launcher di onCreate
+        // Inisialisasi launcher untuk EditProfileActivity
         editProfileLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    // Cek apakah hasilnya OK dan ada data pembaruan
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         boolean isProfileUpdated = result.getData().getBooleanExtra("IS_PROFILE_UPDATED", false);
                         if (isProfileUpdated) {
-                            // Jika profil diperbarui, muat ulang data pengguna
-                            loadUserData();
+                            loadUserData(); // Muat ulang data jika ada pembaruan
                             Toast.makeText(getContext(), "Profil berhasil diperbarui.", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -65,6 +81,8 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         databaseHelper = new DatabaseHelper(getContext());
+
+        // Inisialisasi Views dari bagian profil
         tvNameValue = view.findViewById(R.id.tv_name_value);
         tvEmailValue = view.findViewById(R.id.tv_email_value);
         tvPointValue = view.findViewById(R.id.tv_point_value);
@@ -72,18 +90,22 @@ public class ProfileFragment extends Fragment {
         btnLogout = view.findViewById(R.id.btn_logout);
         btnChangePassword = view.findViewById(R.id.btn_change_password);
 
-        loadUserData();
+        // Inisialisasi Views BARU dari card statistik
+        weeklyChart = view.findViewById(R.id.profile_weekly_chart);
+        tvStatisticUserXp = view.findViewById(R.id.tv_statistic_user_xp);
 
+        // Memuat data dan mengatur UI
+        loadUserData();
+        setupChart(); // Panggil method untuk mengatur grafik
+
+        // Listeners untuk tombol
         btnEditProfile.setOnClickListener(v -> {
-            // DIUBAH: Gunakan launcher untuk memulai EditProfileActivity
             Intent intent = new Intent(getActivity(), EditProfileActivity.class);
             intent.putExtra("USER_EMAIL", userEmail);
             editProfileLauncher.launch(intent);
         });
 
-        btnLogout.setOnClickListener(v -> {
-            logoutUser();
-        });
+        btnLogout.setOnClickListener(v -> logoutUser());
 
         btnChangePassword.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
@@ -93,17 +115,81 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadUserData() {
-        if (getActivity() != null && getActivity().getIntent() != null) {
-            userEmail = getActivity().getIntent().getStringExtra("USER_EMAIL");
-            if (userEmail != null && !userEmail.isEmpty()) {
-                String userName = databaseHelper.getUserName(userEmail);
-                if (userName != null) {
-                    tvNameValue.setText(userName.toUpperCase());
-                    tvEmailValue.setText(userEmail);
-                    tvPointValue.setText("129");
-                }
+        if (getContext() == null) return; // Mencegah error jika fragment belum ter-attach
+
+        // 1. Ambil email dari SharedPreferences, bukan dari Intent Activity
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("GestureLearnPrefs", Context.MODE_PRIVATE);
+        userEmail = sharedPreferences.getString("userEmail", null);
+
+        if (userEmail != null && !userEmail.isEmpty()) {
+            String userName = databaseHelper.getUserName(userEmail);
+
+            // 2. Ambil Poin/XP dari database menggunakan method yang sudah dibuat di DatabaseHelper
+            int userPoints = databaseHelper.getUserPoints(userEmail);
+
+            if (userName != null) {
+                // Set semua data ke UI
+                tvNameValue.setText(userName.toUpperCase());
+                tvEmailValue.setText(userEmail);
+                tvPointValue.setText(String.valueOf(userPoints)); // Ubah int ke String
+                tvStatisticUserXp.setText(userPoints + " XP");
             }
+        } else {
+            // Handle jika userEmail null (seharusnya tidak terjadi jika sudah login)
+            Toast.makeText(getContext(), "Gagal memuat data pengguna.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // METHOD BARU: Untuk mengatur dan mengisi data grafik
+    private void setupChart() {
+        // AMBIL DATA DARI PROGRESS MANAGER, BUKAN DATA STATIS
+        List<Entry> entries = ProgressManager.getWeeklyEntries(getContext());
+
+        if (entries.isEmpty()) {
+            weeklyChart.clear();
+            weeklyChart.setNoDataText("Belum ada progres mingguan.");
+            return;
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Weekly Progress");
+        dataSet.setColor(Color.parseColor("#5F7C50"));
+        dataSet.setCircleColor(Color.parseColor("#5F7C50"));
+        dataSet.setLineWidth(2f);
+        dataSet.setCircleRadius(6f);
+        dataSet.setDrawCircleHole(false);
+        dataSet.setDrawValues(false);
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+
+        LineData lineData = new LineData(dataSet);
+        weeklyChart.setData(lineData);
+
+        // Pengaturan Tampilan (tidak berubah)
+        weeklyChart.getDescription().setEnabled(false);
+        // ... sisa kode setupChart tidak berubah ...
+        weeklyChart.getLegend().setEnabled(false);
+        weeklyChart.setDrawGridBackground(false);
+        weeklyChart.setTouchEnabled(true);
+        weeklyChart.setDragEnabled(true);
+        weeklyChart.setScaleEnabled(false);
+        weeklyChart.setPinchZoom(false);
+
+        XAxis xAxis = weeklyChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(daysOfWeek));
+        xAxis.setTextColor(Color.GRAY);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+
+        weeklyChart.getAxisLeft().setTextColor(Color.GRAY);
+        weeklyChart.getAxisLeft().setAxisMinimum(0f);
+        weeklyChart.getAxisLeft().setDrawGridLines(true);
+        weeklyChart.getAxisLeft().setGridColor(Color.parseColor("#E0E0E0"));
+        weeklyChart.getAxisLeft().setDrawAxisLine(false);
+
+        weeklyChart.getAxisRight().setEnabled(false);
+
+        weeklyChart.invalidate();
     }
 
     private void logoutUser() {
@@ -113,7 +199,6 @@ public class ProfileFragment extends Fragment {
             editor.clear();
             editor.apply();
         }
-
         Toast.makeText(getContext(), "Logout berhasil!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
