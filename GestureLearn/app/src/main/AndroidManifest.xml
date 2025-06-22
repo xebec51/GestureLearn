@@ -15,9 +15,6 @@
         android:theme="@style/Theme.GestureLearn"
         tools:targetApi="31">
         <activity
-            android:name=".activity.WeeklyStatistic"
-            android:exported="false" />
-        <activity
             android:name=".activity.learn.LearnAbjadBisindoActivity"
             android:exported="false" />
         <activity
@@ -28,9 +25,6 @@
             android:exported="false" />
         <activity
             android:name=".activity.learn.LearnDetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.kuis.ReverseQuizAlphabetActivity"
             android:exported="false" />
         <activity
             android:name=".activity.kuis.AlphabetQuizActivity"
@@ -70,9 +64,6 @@
             android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.StreakActivity"
             android:exported="false" />
     </application>
 

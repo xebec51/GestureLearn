@@ -5,16 +5,11 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.gesturelearn.R;
-
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -23,10 +18,11 @@ import java.util.Set;
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
 
     private final List<String> daysOfMonth;
-    private final Set<String> activeDates; // Set tanggal "yyyy-MM-dd"
+    private final Set<String> activeDates;
     private final int currentDay;
     private final int currentMonth;
     private final int currentYear;
+    private final boolean isCurrentDisplayMonth;
 
     public CalendarAdapter(List<String> daysOfMonth, Set<String> activeDates, int year, int month, int day) {
         this.daysOfMonth = daysOfMonth;
@@ -34,6 +30,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         this.currentYear = year;
         this.currentMonth = month;
         this.currentDay = day;
+
+        Calendar todayCal = Calendar.getInstance();
+        this.isCurrentDisplayMonth = (year == todayCal.get(Calendar.YEAR)) && (month == todayCal.get(Calendar.MONTH));
     }
 
     @NonNull
@@ -48,32 +47,33 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         String dayText = daysOfMonth.get(position);
 
         if (dayText.isEmpty()) {
-            // Ini adalah sel kosong sebelum tanggal 1
-            holder.cardDay.setVisibility(View.INVISIBLE);
+            holder.tvDayNumber.setVisibility(View.INVISIBLE);
         } else {
-            holder.cardDay.setVisibility(View.VISIBLE);
-            holder.tvDayNumber.setText(dayText);
-            holder.ivFire.setVisibility(View.GONE); // Sembunyikan ikon api secara default
             holder.tvDayNumber.setVisibility(View.VISIBLE);
+            holder.tvDayNumber.setText(dayText);
 
-            // Buat format tanggal "yyyy-MM-dd" untuk hari ini
+            // Reset ke style default
+            holder.tvDayNumber.setBackgroundResource(android.R.color.transparent);
+            holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.text_secondary));
+            holder.tvDayNumber.setTypeface(null, Typeface.NORMAL);
+
             String fullDate = String.format(Locale.US, "%d-%02d-%02d", currentYear, currentMonth + 1, Integer.parseInt(dayText));
+            boolean isActive = activeDates.contains(fullDate);
+            boolean isToday = isCurrentDisplayMonth && Integer.parseInt(dayText) == currentDay;
 
-            // Cek apakah tanggal ini ada di daftar tanggal aktif
-            if (activeDates.contains(fullDate)) {
-                holder.ivFire.setVisibility(View.VISIBLE);
-                holder.tvDayNumber.setVisibility(View.GONE);
+            // Terapkan style berdasarkan kondisi, prioritaskan hari ini
+            if (isToday) {
+                holder.tvDayNumber.setBackgroundResource(R.drawable.calendar_day_today_bg);
+                holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
+                holder.tvDayNumber.setTypeface(null, Typeface.BOLD);
             }
 
-            // Tandai hari ini
-            if (Integer.parseInt(dayText) == currentDay) {
+            // Timpa dengan style aktif jika hari tersebut aktif
+            if (isActive) {
+                // GUNAKAN DRAWABLE BARU DI SINI
+                holder.tvDayNumber.setBackgroundResource(R.drawable.calendar_active_day_bg);
                 holder.tvDayNumber.setTextColor(Color.WHITE);
                 holder.tvDayNumber.setTypeface(null, Typeface.BOLD);
-                holder.cardDay.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
-            } else {
-                holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.text_primary));
-                holder.tvDayNumber.setTypeface(null, Typeface.NORMAL);
-                holder.cardDay.setCardBackgroundColor(Color.TRANSPARENT);
             }
         }
     }
@@ -85,14 +85,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView tvDayNumber;
-        final ImageView ivFire;
-        final CardView cardDay;
 
         ViewHolder(View itemView) {
             super(itemView);
             tvDayNumber = itemView.findViewById(R.id.tvDayNumber);
-            ivFire = itemView.findViewById(R.id.ivFire);
-            cardDay = itemView.findViewById(R.id.cardDay);
         }
     }
 }

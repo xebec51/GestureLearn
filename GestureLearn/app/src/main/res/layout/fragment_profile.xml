@@ -20,23 +20,20 @@
             android:scaleType="centerCrop"
             android:src="@drawable/img_profile_background"
             app:layout_constraintTop_toTopOf="parent" />
-
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_profilePicture"
             android:layout_width="130dp"
             android:layout_height="130dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="150dp"
             android:padding="4dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_profile_default"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
             app:strokeColor="@color/green"
             app:strokeWidth="5dp" />
-
         <TextView
             android:id="@+id/tv_name_value"
             android:layout_width="wrap_content"
@@ -49,7 +46,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_profilePicture"
             tools:text="RINALDI" />
-
         <TextView
             android:id="@+id/tv_email_value"
             android:layout_width="wrap_content"
@@ -61,8 +57,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_name_value"
             tools:text="rinaldi@gmail.com" />
-
-
         <LinearLayout
             android:id="@+id/ll_stats_header"
             android:layout_width="0dp"
@@ -75,14 +69,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_email_value">
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/tv_point_value"
                     android:layout_width="wrap_content"
@@ -91,7 +83,6 @@
                     android:textColor="@color/green"
                     android:textSize="24sp"
                     tools:text="100" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -100,37 +91,28 @@
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
-
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="16dp"
                 android:background="@color/lightGreen" />
-
             <LinearLayout
-                android:id="@+id/ll_streak_badge"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground"
                 android:gravity="center"
                 android:orientation="vertical">
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <ImageView
                         android:id="@+id/iv_streak_icon"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginEnd="8dp"
                         tools:src="@drawable/img_fire" />
-
                     <TextView
                         android:id="@+id/tv_streak_count"
                         android:layout_width="wrap_content"
@@ -140,7 +122,6 @@
                         android:textSize="24sp"
                         tools:text="1" />
                 </LinearLayout>
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -149,7 +130,6 @@
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
-
         </LinearLayout>
 
         <androidx.cardview.widget.CardView
@@ -160,29 +140,26 @@
             android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/grey"
             app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ll_stats_header">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingBottom="5dp">
-
                     <View
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/green_circle" />
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -191,7 +168,6 @@
                         android:text="Statistik Mingguan"
                         android:textColor="@color/green"
                         android:textSize="15sp" />
-
                     <TextView
                         android:id="@+id/tv_statistic_user_xp"
                         android:layout_width="wrap_content"
@@ -201,12 +177,83 @@
                         android:textSize="15sp"
                         tools:text="100 XP" />
                 </LinearLayout>
-
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/profile_weekly_chart"
                     android:layout_width="match_parent"
                     android:layout_height="220dp"
                     android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_calendar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/grey"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_weekly_statistic">
+
+            <LinearLayout
+                android:id="@+id/ll_calendar_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+                    <TextView
+                        android:id="@+id/tvCurrentMonth"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@color/green"
+                        android:textSize="20sp"
+                        tools:text="Juni 2025" />
+                    <ImageButton
+                        android:id="@+id/btnPreviousMonth"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Bulan Sebelumnya"
+                        android:src="@drawable/ic_arrow_back"
+                        app:tint="@color/green" />
+                    <ImageButton
+                        android:id="@+id/btnNextMonth"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Bulan Berikutnya"
+                        android:rotation="180"
+                        android:src="@drawable/ic_arrow_back"
+                        app:tint="@color/green" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView style="@style/DayLabel" android:text="Mg"/>
+                    <TextView style="@style/DayLabel" android:text="Sn"/>
+                    <TextView style="@style/DayLabel" android:text="Sl"/>
+                    <TextView style="@style/DayLabel" android:text="Rb"/>
+                    <TextView style="@style/DayLabel" android:text="Km"/>
+                    <TextView style="@style/DayLabel" android:text="Jm"/>
+                    <TextView style="@style/DayLabel" android:text="Sb"/>
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvCalendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_calendar" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -218,11 +265,9 @@
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_weekly_statistic">
-
+            app:layout_constraintTop_toBottomOf="@id/card_calendar">
             <Button
                 android:id="@+id/btn_editProfile"
                 android:layout_width="match_parent"
@@ -234,7 +279,6 @@
                 android:textColor="@color/green"
                 android:textSize="16sp"
                 app:cornerRadius="15dp" />
-
             <Button
                 android:id="@+id/btn_change_password"
                 android:layout_width="match_parent"
@@ -247,7 +291,6 @@
                 android:textColor="@color/green"
                 android:textSize="16sp"
                 app:cornerRadius="15dp" />
-
             <Button
                 android:id="@+id/btn_logout"
                 style="@style/Widget.Material3.Button.OutlinedButton"

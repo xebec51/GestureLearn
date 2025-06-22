@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView; // <-- TAMBAHKAN impor untuk ImageView
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,12 +20,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gesturelearn.R;
 import com.example.gesturelearn.activity.ChangePasswordActivity;
 import com.example.gesturelearn.activity.EditProfileActivity;
-import com.example.gesturelearn.activity.StreakActivity;
 import com.example.gesturelearn.activity.auth.LoginActivity;
+import com.example.gesturelearn.adapter.CalendarAdapter;
 import com.example.gesturelearn.data.DatabaseHelper;
 import com.example.gesturelearn.utils.ProgressManager;
 
@@ -40,19 +42,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class ProfileFragment extends Fragment {
-
-    // Variabel UI
-    private TextView tvNameValue, tvEmailValue, tvPointValue, tvStatisticUserXp, tvStreakCount;
+    private TextView tvNameValue, tvEmailValue, tvPointValue, tvStatisticUserXp, tvStreakCount, tvCurrentMonth;
     private Button btnEditProfile, btnLogout, btnChangePassword;
     private LineChart weeklyChart;
-    private ImageView ivStreakIcon; // <-- DEKLARASIKAN ImageView untuk ikon streak
+    private ImageView ivStreakIcon;
+    private RecyclerView rvCalendar;
+    private ImageButton btnPreviousMonth, btnNextMonth;
 
     private DatabaseHelper databaseHelper;
     private String userEmail;
     private ActivityResultLauncher<Intent> editProfileLauncher;
-    private LinearLayout llStreakBadge;
+    private Calendar selectedDate;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,10 +94,16 @@ public class ProfileFragment extends Fragment {
         tvStatisticUserXp = view.findViewById(R.id.tv_statistic_user_xp);
         tvStreakCount = view.findViewById(R.id.tv_streak_count);
         ivStreakIcon = view.findViewById(R.id.iv_streak_icon);
-        llStreakBadge = view.findViewById(R.id.ll_streak_badge);
+        rvCalendar = view.findViewById(R.id.rvCalendar);
+        tvCurrentMonth = view.findViewById(R.id.tvCurrentMonth);
+        btnPreviousMonth = view.findViewById(R.id.btnPreviousMonth);
+        btnNextMonth = view.findViewById(R.id.btnNextMonth);
+
+        selectedDate = Calendar.getInstance();
 
         loadUserData();
         setupChart();
+        setupCalendar();
 
         // Setup Listeners
         btnEditProfile.setOnClickListener(v -> {
@@ -108,10 +117,13 @@ public class ProfileFragment extends Fragment {
             intent.putExtra("USER_EMAIL", userEmail);
             startActivity(intent);
         });
-
-        llStreakBadge.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), StreakActivity.class);
-            startActivity(intent);
+        btnPreviousMonth.setOnClickListener(v -> {
+            selectedDate.add(Calendar.MONTH, -1);
+            setupCalendar();
+        });
+        btnNextMonth.setOnClickListener(v -> {
+            selectedDate.add(Calendar.MONTH, 1);
+            setupCalendar();
         });
     }
 
@@ -145,6 +157,38 @@ public class ProfileFragment extends Fragment {
         } else {
             Toast.makeText(getContext(), "Gagal memuat data pengguna.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupCalendar() {
+        if (getContext() == null) return;
+        SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMMM yyyy", new Locale("id", "ID"));
+        tvCurrentMonth.setText(monthYearFormat.format(selectedDate.getTime()));
+
+        ArrayList<String> daysInMonth = new ArrayList<>();
+        Calendar monthCalendar = (Calendar) selectedDate.clone();
+        monthCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        int daysInCurrentMonth = monthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int dayOfWeekOfFirst = monthCalendar.get(Calendar.DAY_OF_WEEK);
+
+        for (int i = 1; i < dayOfWeekOfFirst; i++) {
+            daysInMonth.add("");
+        }
+        for (int i = 1; i <= daysInCurrentMonth; i++) {
+            daysInMonth.add(String.valueOf(i));
+        }
+
+        Set<String> activeDates = ProgressManager.getActiveDates(getContext());
+        int year = selectedDate.get(Calendar.YEAR);
+        int month = selectedDate.get(Calendar.MONTH);
+
+        Calendar today = Calendar.getInstance();
+        int currentDay = (selectedDate.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
+                          selectedDate.get(Calendar.MONTH) == today.get(Calendar.MONTH))
+                         ? today.get(Calendar.DAY_OF_MONTH) : 0;
+
+        CalendarAdapter adapter = new CalendarAdapter(daysInMonth, activeDates, year, month, currentDay);
+        rvCalendar.setLayoutManager(new GridLayoutManager(getContext(), 7));
+        rvCalendar.setAdapter(adapter);
     }
 
     private String[] getSevenDayLabels() {
