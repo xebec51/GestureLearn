@@ -41,25 +41,17 @@ public class ProgressManager {
     // Method untuk mendapatkan data untuk grafik
     public static List<Entry> getWeeklyEntries(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-
-        // Panggil shiftDaysIfNeeded untuk memastikan data up-to-date sebelum ditampilkan
         shiftDaysIfNeeded(prefs, prefs.edit());
 
         List<Entry> entries = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
-        int todayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // Sunday=1, Monday=2, ..., Saturday=7
-
-        // Buat data untuk 7 hari di grafik
+        // Loop dari 6 hari yang lalu (i=0) sampai hari ini (i=6)
         for (int i = 0; i < 7; i++) {
-            // Tentukan hari di chart (0=Su, 1=Mo, ..., 6=Sa)
-            int chartDayIndex = (todayOfWeek - 1 - i + 7) % 7;
-            int points = prefs.getInt(DAY_KEYS[i], 0);
-            entries.add(new Entry(chartDayIndex, points));
+            // daysAgo: 6, 5, 4, 3, 2, 1, 0
+            int daysAgo = 6 - i;
+            int points = prefs.getInt(DAY_KEYS[daysAgo], 0);
+            // Tambahkan entry dengan sumbu-x dari 0 hingga 6
+            entries.add(new Entry(i, points));
         }
-
-        // Urutkan berdasarkan index hari agar grafik tergambar dengan benar
-        Collections.sort(entries, (o1, o2) -> Float.compare(o1.getX(), o2.getX()));
-
         return entries;
     }
 

@@ -33,8 +33,12 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class ProfileFragment extends Fragment {
 
@@ -48,7 +52,6 @@ public class ProfileFragment extends Fragment {
 
     private DatabaseHelper databaseHelper;
     private String userEmail;
-    private final String[] daysOfWeek = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
     private ActivityResultLauncher<Intent> editProfileLauncher;
 
@@ -142,7 +145,7 @@ public class ProfileFragment extends Fragment {
 
     // METHOD BARU: Untuk mengatur dan mengisi data grafik
     private void setupChart() {
-        // AMBIL DATA DARI PROGRESS MANAGER, BUKAN DATA STATIS
+        // Data sudah benar dari ProgressManager
         List<Entry> entries = ProgressManager.getWeeklyEntries(getContext());
 
         if (entries.isEmpty()) {
@@ -163,9 +166,7 @@ public class ProfileFragment extends Fragment {
         LineData lineData = new LineData(dataSet);
         weeklyChart.setData(lineData);
 
-        // Pengaturan Tampilan (tidak berubah)
         weeklyChart.getDescription().setEnabled(false);
-        // ... sisa kode setupChart tidak berubah ...
         weeklyChart.getLegend().setEnabled(false);
         weeklyChart.setDrawGridBackground(false);
         weeklyChart.setTouchEnabled(true);
@@ -173,14 +174,17 @@ public class ProfileFragment extends Fragment {
         weeklyChart.setScaleEnabled(false);
         weeklyChart.setPinchZoom(false);
 
+        // Pengaturan Sumbu X (Hari)
         XAxis xAxis = weeklyChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(daysOfWeek));
+        // Gunakan label dinamis yang baru dibuat
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(getSevenDayLabels()));
         xAxis.setTextColor(Color.GRAY);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
 
+        // Pengaturan Sumbu Y (Kiri)
         weeklyChart.getAxisLeft().setTextColor(Color.GRAY);
         weeklyChart.getAxisLeft().setAxisMinimum(0f);
         weeklyChart.getAxisLeft().setDrawGridLines(true);
@@ -191,6 +195,7 @@ public class ProfileFragment extends Fragment {
 
         weeklyChart.invalidate();
     }
+
 
     private void logoutUser() {
         if (getActivity() != null) {
@@ -206,5 +211,23 @@ public class ProfileFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().finish();
         }
+    }
+
+    private String[] getSevenDayLabels() {
+        String[] labels = new String[7];
+        Calendar cal = Calendar.getInstance();
+        // Gunakan format "E" untuk mendapatkan nama hari (e.g., "Sun", "Mon")
+        SimpleDateFormat sdf = new SimpleDateFormat("E", Locale.US);
+
+        // Mundur 6 hari dari hari ini untuk memulai loop
+        cal.add(Calendar.DAY_OF_YEAR, -6);
+
+        for (int i = 0; i < 7; i++) {
+            // Ambil 2 karakter pertama dari nama hari (e.g., "Su", "Mo")
+            labels[i] = sdf.format(cal.getTime()).substring(0, 2);
+            // Maju satu hari untuk iterasi berikutnya
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        return labels;
     }
 }
