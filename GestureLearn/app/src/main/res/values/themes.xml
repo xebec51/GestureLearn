@@ -17,6 +17,16 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="DayLabel" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <style name="ReverseQuizOption" parent="">
         <item name="android:layout_width">120dp</item>
         <item name="android:layout_height">120dp</item>

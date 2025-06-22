@@ -21,6 +21,39 @@
             android:src="@drawable/img_profile_background"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/ll_streak_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/streak_badge_bg"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:gravity="center_vertical"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp">
+
+            <ImageView
+                android:id="@+id/iv_streak_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/img_fire"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/tv_streak_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                tools:text="3"
+                android:text="0"
+                android:textColor="#FF6D00"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_profilePicture"
             android:layout_width="130dp"
