@@ -21,7 +21,6 @@ public class ProgressManager {
     private static final String LAST_UPDATE_DATE_KEY = "last_update_date";
     private static final String STREAK_COUNT_KEY = "streak_count";
     private static final String LAST_STREAK_DATE_KEY = "last_streak_date";
-    // Kunci baru untuk menyimpan semua tanggal aktif
     private static final String ACTIVE_DATES_KEY = "active_dates";
 
     private static final String[] DAY_KEYS = {
@@ -39,7 +38,6 @@ public class ProgressManager {
         int currentPoints = prefs.getInt(DAY_KEYS[0], 0);
         editor.putInt(DAY_KEYS[0], currentPoints + pointsToAdd);
 
-        // Tambahkan tanggal hari ini ke daftar tanggal aktif
         String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         Set<String> activeDates = new HashSet<>(prefs.getStringSet(ACTIVE_DATES_KEY, new HashSet<>()));
         activeDates.add(todayStr);
@@ -48,13 +46,27 @@ public class ProgressManager {
         editor.apply();
     }
 
-    // METHOD BARU untuk mendapatkan daftar tanggal aktif
+    public static List<Entry> getWeeklyEntries(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        shiftDaysIfNeeded(prefs, prefs.edit());
+
+        List<Entry> entries = new ArrayList<>();
+        // Loop untuk 7 hari, di mana i=0 adalah 6 hari yang lalu, dan i=6 adalah hari ini.
+        // Ini memastikan sumbu-x selalu kontinu dari 0 hingga 6.
+        for (int i = 0; i < 7; i++) {
+            // daysAgo akan menghitung mundur: 6, 5, 4, ..., 0
+            int daysAgo = 6 - i;
+            int points = prefs.getInt(DAY_KEYS[daysAgo], 0);
+            // Tambahkan entri dengan sumbu-x yang berurutan (0, 1, 2, ..., 6)
+            entries.add(new Entry(i, points));
+        }
+        return entries; // Data sudah terurut berdasarkan sumbu-x
+    }
+
     public static Set<String> getActiveDates(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getStringSet(ACTIVE_DATES_KEY, new HashSet<>());
     }
-
-    // Sisa kode di bawah ini tidak berubah
     public static void updateStreak(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -63,7 +75,7 @@ public class ProgressManager {
         String lastStreakDateStr = prefs.getString(LAST_STREAK_DATE_KEY, "");
         int currentStreak = prefs.getInt(STREAK_COUNT_KEY, 0);
         if (lastStreakDateStr.isEmpty()) {
-            editor.putInt(STREAK_COUNT_KEY, 1);
+            if (currentStreak > 0) editor.putInt(STREAK_COUNT_KEY, currentStreak); else editor.putInt(STREAK_COUNT_KEY, 1);
         } else if (!lastStreakDateStr.equals(todayStr)) {
             try {
                 Date lastDate = sdf.parse(lastStreakDateStr);
@@ -89,27 +101,64 @@ public class ProgressManager {
         updateStreak(context);
         return prefs.getInt(STREAK_COUNT_KEY, 0);
     }
-    public static List<Entry> getWeeklyEntries(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        shiftDaysIfNeeded(prefs, prefs.edit());
-        List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            int daysAgo = 6 - i;
-            int points = prefs.getInt(DAY_KEYS[daysAgo], 0);
-            entries.add(new Entry(i, points));
-        }
-        return entries;
-    }
     private static void shiftDaysIfNeeded(SharedPreferences prefs, SharedPreferences.Editor editor) {
-        String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        String lastUpdateDate = prefs.getString(LAST_UPDATE_DATE_KEY, "");
-        if (!todayDate.equals(lastUpdateDate)) {
-            for (int i = DAY_KEYS.length - 1; i > 0; i--) {
-                int previousDayPoints = prefs.getInt(DAY_KEYS[i - 1], 0);
-                editor.putInt(DAY_KEYS[i], previousDayPoints);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayStr = sdf.format(new Date());
+        String lastUpdateDateStr = prefs.getString(LAST_UPDATE_DATE_KEY, "");
+
+        if (lastUpdateDateStr.isEmpty()) {
+            // Jika ini adalah pertama kalinya, simpan tanggal hari ini
+            editor.putString(LAST_UPDATE_DATE_KEY, todayStr);
+            editor.apply();
+            return;
+        }
+
+        if (todayStr.equals(lastUpdateDateStr)) {
+            return; // Tidak perlu digeser, masih di hari yang sama
+        }
+
+        try {
+            Date lastDate = sdf.parse(lastUpdateDateStr);
+            Date todayDate = sdf.parse(todayStr);
+
+            // Hitung berapa hari telah berlalu
+            long diffInMillis = todayDate.getTime() - lastDate.getTime();
+            int daysPassed = (int) (diffInMillis / (1000 * 60 * 60 * 24));
+
+            if (daysPassed <= 0) {
+                // Jam dimundurkan, jangan lakukan apa-apa untuk menghindari kehilangan data
+                return;
             }
-            editor.putInt(DAY_KEYS[0], 0);
-            editor.putString(LAST_UPDATE_DATE_KEY, todayDate);
+
+            if (daysPassed >= DAY_KEYS.length) {
+                // Jika sudah seminggu atau lebih, reset semua data
+                for (String dayKey : DAY_KEYS) {
+                    editor.putInt(dayKey, 0);
+                }
+            } else {
+                // Geser data sebanyak hari yang telah berlalu
+                // Pindahkan data lama ke posisi barunya
+                for (int i = DAY_KEYS.length - 1; i >= daysPassed; i--) {
+                    int sourcePoints = prefs.getInt(DAY_KEYS[i - daysPassed], 0);
+                    editor.putInt(DAY_KEYS[i], sourcePoints);
+                }
+                // Isi hari-hari yang terlewat (celah) dengan nilai 0
+                for (int i = 0; i < daysPassed; i++) {
+                    editor.putInt(DAY_KEYS[i], 0);
+                }
+            }
+
+            // Simpan tanggal pembaruan terakhir
+            editor.putString(LAST_UPDATE_DATE_KEY, todayStr);
+            editor.apply();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Jika terjadi error saat parsing, lebih aman untuk mereset data
+            for (String dayKey : DAY_KEYS) {
+                editor.putInt(dayKey, 0);
+            }
+            editor.putString(LAST_UPDATE_DATE_KEY, todayStr);
             editor.apply();
         }
     }

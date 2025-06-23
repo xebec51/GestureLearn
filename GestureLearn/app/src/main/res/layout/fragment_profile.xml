@@ -20,20 +20,35 @@
             android:scaleType="centerCrop"
             android:src="@drawable/img_profile_background"
             app:layout_constraintTop_toTopOf="parent" />
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_profilePicture"
             android:layout_width="130dp"
             android:layout_height="130dp"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="76dp"
             android:padding="4dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_profile_default"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
             app:strokeColor="@color/green"
             app:strokeWidth="5dp" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/shape_circle_green"
+            android:elevation="5dp"
+            android:src="@drawable/ic_pen"
+            app:layout_constraintCircle="@id/iv_profilePicture"
+            app:layout_constraintCircleAngle="135"
+            app:layout_constraintCircleRadius="65dp"
+            tools:ignore="MissingConstraints" />
+
         <TextView
             android:id="@+id/tv_name_value"
             android:layout_width="wrap_content"

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +20,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.canhub.cropper.CropImage;
+import com.canhub.cropper.CropImageView;
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
 import com.example.gesturelearn.R;
 import com.example.gesturelearn.activity.ChangePasswordActivity;
 import com.example.gesturelearn.activity.EditProfileActivity;
@@ -45,21 +53,27 @@ import java.util.Locale;
 import java.util.Set;
 
 public class ProfileFragment extends Fragment {
+
+    // Variabel UI
     private TextView tvNameValue, tvEmailValue, tvPointValue, tvStatisticUserXp, tvStreakCount, tvCurrentMonth;
     private Button btnEditProfile, btnLogout, btnChangePassword;
     private LineChart weeklyChart;
-    private ImageView ivStreakIcon;
+    private ImageView ivStreakIcon, iv_profilePicture;
     private RecyclerView rvCalendar;
-    private ImageButton btnPreviousMonth, btnNextMonth;
+    private ImageButton btnPreviousMonth, btnNextMonth, btn_edit_photo;
 
     private DatabaseHelper databaseHelper;
     private String userEmail;
     private ActivityResultLauncher<Intent> editProfileLauncher;
     private Calendar selectedDate;
 
+    // Launcher untuk mengambil hasil dari Image Cropper
+    private ActivityResultLauncher<CropImageContractOptions> cropImageLauncher;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         editProfileLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -70,6 +84,26 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 });
+
+        // Inisialisasi launcher untuk Image Cropper
+        cropImageLauncher = registerForActivityResult(new CropImageContract(), result -> {
+            if (result.isSuccessful()) {
+                Uri croppedImageUri = result.getUriContent();
+                // Tampilkan gambar yang sudah dipotong
+                if (getContext() != null) {
+                    Glide.with(getContext()).load(croppedImageUri).into(iv_profilePicture);
+                }
+                // Simpan URI ke database
+                if (userEmail != null) {
+                    databaseHelper.updateProfilePhotoUri(userEmail, croppedImageUri.toString());
+                }
+            } else {
+                Exception error = result.getError();
+                if (error != null && getContext() != null) {
+                    Toast.makeText(getContext(), "Gagal memotong gambar: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Nullable
@@ -84,6 +118,8 @@ public class ProfileFragment extends Fragment {
         databaseHelper = new DatabaseHelper(getContext());
 
         // Inisialisasi semua Views
+        iv_profilePicture = view.findViewById(R.id.iv_profilePicture);
+        btn_edit_photo = view.findViewById(R.id.btn_edit_photo);
         tvNameValue = view.findViewById(R.id.tv_name_value);
         tvEmailValue = view.findViewById(R.id.tv_email_value);
         tvPointValue = view.findViewById(R.id.tv_point_value);
@@ -106,6 +142,8 @@ public class ProfileFragment extends Fragment {
         setupCalendar();
 
         // Setup Listeners
+        btn_edit_photo.setOnClickListener(v -> startCropImage());
+
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), EditProfileActivity.class);
             intent.putExtra("USER_EMAIL", userEmail);
@@ -127,27 +165,52 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    private void startCropImage() {
+        // Buat instance dari CropImageOptions
+        CropImageOptions cropImageOptions = new CropImageOptions();
+
+        // Atur opsi dengan mereferensikan enum dari CropImageView
+        cropImageOptions.cropShape = CropImageView.CropShape.OVAL; // DIUBAH: Menggunakan CropImageView
+        cropImageOptions.aspectRatioX = 1;
+        cropImageOptions.aspectRatioY = 1;
+        cropImageOptions.fixAspectRatio = true;
+        cropImageOptions.outputCompressQuality = 70;
+        cropImageOptions.guidelines = CropImageView.Guidelines.ON_TOUCH; // DIUBAH: Menggunakan CropImageView
+
+        // Buat kontrak dengan opsi yang sudah diatur
+        CropImageContractOptions options = new CropImageContractOptions(null, cropImageOptions);
+
+        // Jalankan launcher
+        cropImageLauncher.launch(options);
+    }
+
     private void loadUserData() {
         if (getContext() == null) return;
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("GestureLearnPrefs", Context.MODE_PRIVATE);
         userEmail = sharedPreferences.getString("userEmail", null);
 
         if (userEmail != null && !userEmail.isEmpty()) {
+            // Memuat foto profil dari database
+            String photoUriString = databaseHelper.getProfilePhotoUri(userEmail);
+            if (photoUriString != null) {
+                Glide.with(getContext())
+                        .load(Uri.parse(photoUriString))
+                        .placeholder(R.drawable.img_profile_default)
+                        .into(iv_profilePicture);
+            } else {
+                iv_profilePicture.setImageResource(R.drawable.img_profile_default);
+            }
+
             String userName = databaseHelper.getUserName(userEmail);
             int userPoints = databaseHelper.getUserPoints(userEmail);
             int currentStreak = ProgressManager.getCurrentStreak(getContext());
 
             if (userName != null) {
-                // Set info utama
                 tvNameValue.setText(userName.toUpperCase());
                 tvEmailValue.setText(userEmail);
                 tvPointValue.setText(String.valueOf(userPoints));
                 tvStatisticUserXp.setText(userPoints + " XP");
                 tvStreakCount.setText(String.valueOf(currentStreak));
-
-                // ========================================================
-                // LOGIKA UNTUK MENGGANTI IKON STREAK
-                // ========================================================
                 if (currentStreak > 0) {
                     ivStreakIcon.setImageResource(R.drawable.img_fire);
                 } else {
@@ -183,8 +246,8 @@ public class ProfileFragment extends Fragment {
 
         Calendar today = Calendar.getInstance();
         int currentDay = (selectedDate.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
-                          selectedDate.get(Calendar.MONTH) == today.get(Calendar.MONTH))
-                         ? today.get(Calendar.DAY_OF_MONTH) : 0;
+                selectedDate.get(Calendar.MONTH) == today.get(Calendar.MONTH))
+                ? today.get(Calendar.DAY_OF_MONTH) : 0;
 
         CalendarAdapter adapter = new CalendarAdapter(daysInMonth, activeDates, year, month, currentDay);
         rvCalendar.setLayoutManager(new GridLayoutManager(getContext(), 7));
@@ -220,7 +283,20 @@ public class ProfileFragment extends Fragment {
         dataSet.setCircleRadius(6f);
         dataSet.setDrawCircleHole(false);
         dataSet.setDrawValues(false);
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        dataSet.setMode(LineDataSet.Mode.LINEAR);
+
+        // 1. Mengaktifkan gambar gradasi (fill)
+        dataSet.setDrawFilled(true);
+
+        // 2. Mengatur gradasi dari atas ke bawah
+        dataSet.setFillDrawable(ContextCompat.getDrawable(getContext(), R.drawable.chart_fade_green));
+
+        // 3. (Opsional) Mengatur agar titik di sumbu nol tetap terlihat
+        dataSet.setDrawCircles(true); // Pastikan lingkaran selalu digambar
+        dataSet.setDrawCircleHole(true);
+        dataSet.setCircleHoleRadius(2.5f);
+        dataSet.setCircleColor(Color.parseColor("#5F7C50"));
+        dataSet.setCircleHoleColor(Color.WHITE);
 
         LineData lineData = new LineData(dataSet);
         weeklyChart.setData(lineData);

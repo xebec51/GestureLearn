@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "GestureLearn.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_USERS = "users";
 
@@ -20,13 +20,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_PASSWORD = "password";
     public static final String COLUMN_POINTS = "points";
+    public static final String COLUMN_PROFILE_PHOTO_URI = "profile_photo_uri";
 
     private static final String CREATE_TABLE_USERS = "CREATE TABLE " + TABLE_USERS + "("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_NAME + " TEXT,"
             + COLUMN_EMAIL + " TEXT UNIQUE,"
             + COLUMN_PASSWORD + " TEXT,"
-            + COLUMN_POINTS + " INTEGER DEFAULT 0"
+            + COLUMN_POINTS + " INTEGER DEFAULT 0,"
+            + COLUMN_PROFILE_PHOTO_URI + " TEXT"
             + ")";
 
     public DatabaseHelper(@Nullable Context context) {
@@ -146,5 +148,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         int result = db.update(TABLE_USERS, values, COLUMN_EMAIL + " = ?", new String[]{email});
         return result > 0;
+    }
+
+    public void updateProfilePhotoUri(String email, String uri) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PROFILE_PHOTO_URI, uri);
+        db.update(TABLE_USERS, values, COLUMN_EMAIL + " = ?", new String[]{email});
+    }
+
+    public String getProfilePhotoUri(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_PROFILE_PHOTO_URI},
+                COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String uri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PROFILE_PHOTO_URI));
+            cursor.close();
+            return uri;
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        return null;
     }
 }

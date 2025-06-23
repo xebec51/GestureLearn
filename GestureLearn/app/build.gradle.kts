@@ -49,6 +49,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation(libs.mpandroidchart)
+    implementation(libs.android.image.cropper)
 }
 
 ksp {

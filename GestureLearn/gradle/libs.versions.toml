@@ -1,5 +1,6 @@
 [versions]
 agp = "8.9.1"
+androidImageCropper = "4.6.0"
 kotlin = "1.9.22"
 glide = "4.16.0"
 junit = "4.13.2"
@@ -14,6 +15,7 @@ room = "2.6.1"
 ksp = "1.9.22-1.0.17"
 
 [libraries]
+android-image-cropper = { group = "com.vanniktech", name = "android-image-cropper", version.ref = "androidImageCropper" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
