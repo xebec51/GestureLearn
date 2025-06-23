@@ -66,7 +66,6 @@ public class EditProfileActivity extends AppCompatActivity {
         if (userEmail != null) {
             boolean isUpdated = databaseHelper.updateUser(userEmail, newName);
             if (isUpdated) {
-                // DIUBAH: Siapkan intent untuk mengirim hasil kembali
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("IS_PROFILE_UPDATED", true);
                 setResult(Activity.RESULT_OK, resultIntent);

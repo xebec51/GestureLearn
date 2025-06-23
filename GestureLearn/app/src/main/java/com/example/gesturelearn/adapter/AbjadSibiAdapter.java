@@ -27,7 +27,6 @@ public class AbjadSibiAdapter extends RecyclerView.Adapter<AbjadSibiAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Menggunakan item_abjad_sibi.xml
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_abjad_sibi, parent, false);
         return new ViewHolder(view);
     }

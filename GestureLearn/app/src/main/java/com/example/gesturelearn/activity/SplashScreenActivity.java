@@ -12,7 +12,7 @@ import com.example.gesturelearn.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DELAY = 2000; // 2 detik
+    private static final int SPLASH_DELAY = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -15,24 +15,21 @@ public class QuizResultActivity extends AppCompatActivity {
 
     private TextView tvFinalScore, tvCorrectAnswers, tvWrongAnswers;
     private Button btnRetry, btnBackToHome;
-    private DatabaseHelper databaseHelper; // <-- Deklarasi DatabaseHelper
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_result);
 
-        // Inisialisasi DatabaseHelper
         databaseHelper = new DatabaseHelper(this);
 
-        // Inisialisasi Views
         tvFinalScore = findViewById(R.id.tv_final_score);
         tvCorrectAnswers = findViewById(R.id.tv_correct_answers);
         tvWrongAnswers = findViewById(R.id.tv_wrong_answers);
         btnRetry = findViewById(R.id.btn_retry);
         btnBackToHome = findViewById(R.id.btn_back_to_home);
 
-        // Ambil data skor dari Intent
         int finalScore = getIntent().getIntExtra("FINAL_SCORE", 0);
         int totalQuestions = 10;
         int correctAnswers = finalScore / 10;
@@ -43,9 +40,6 @@ public class QuizResultActivity extends AppCompatActivity {
         tvCorrectAnswers.setText(correctAnswers + " Jawaban benar");
         tvWrongAnswers.setText(wrongAnswers + " Jawaban salah");
 
-        // =======================================================
-        // LOGIKA PENAMBAHAN POIN DITAMBAHKAN DI SINI
-        // =======================================================
         if (finalScore > 0) {
             updateUserPoints(finalScore);
         }
@@ -59,7 +53,6 @@ public class QuizResultActivity extends AppCompatActivity {
         });
 
         btnBackToHome.setOnClickListener(v -> {
-            // Kembali ke halaman utama (MainActivity akan menampilkan fragment terakhir yang dibuka)
             finish();
         });
     }
@@ -70,7 +63,7 @@ public class QuizResultActivity extends AppCompatActivity {
 
         if (userEmail != null && !userEmail.isEmpty()) {
             databaseHelper.updateUserPoints(userEmail, pointsToAdd);
-            // TAMBAHKAN BARIS INI untuk mencatat progres harian
+            // untuk mencatat progres harian
             ProgressManager.addPoints(this, pointsToAdd);
         }
     }

@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
 
-        // Tampilkan HomeFragment sebagai default saat pertama kali dibuka
+        // kasi tampil HomeFragment sebagai default saat pertama kali dibuka
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new HomeFragment()).commit();

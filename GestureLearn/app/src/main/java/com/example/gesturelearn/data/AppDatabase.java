@@ -17,14 +17,10 @@ import java.util.concurrent.Executors;
 
 @Database(entities = {Sign.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
-
     public abstract SignDao signDao();
-
     private static volatile AppDatabase INSTANCE;
     private static final ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();
 
-    // --- PERUBAHAN DIMULAI DI SINI ---
-    // Callback sekarang didefinisikan di dalam metode getDatabase agar bisa mengakses 'context'
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -59,7 +55,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
         dao.insertAll(allSigns);
     }
-    // --- AKHIR PERUBAHAN ---
 
     private static List<Sign> loadSignsFromFile(Context context, String fileName, String category) {
         List<Sign> signs = new ArrayList<>();
@@ -68,7 +63,6 @@ public abstract class AppDatabase extends RoomDatabase {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
-                    // Pastikan tidak ada spasi ekstra
                     signs.add(new Sign(parts[0].trim(), parts[1].trim(), category));
                 }
             }

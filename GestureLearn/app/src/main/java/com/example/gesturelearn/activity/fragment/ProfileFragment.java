@@ -67,7 +67,6 @@ public class ProfileFragment extends Fragment {
     private ActivityResultLauncher<Intent> editProfileLauncher;
     private Calendar selectedDate;
 
-    // Launcher untuk mengambil hasil dari Image Cropper
     private ActivityResultLauncher<CropImageContractOptions> cropImageLauncher;
 
     @Override
@@ -85,15 +84,12 @@ public class ProfileFragment extends Fragment {
                     }
                 });
 
-        // Inisialisasi launcher untuk Image Cropper
         cropImageLauncher = registerForActivityResult(new CropImageContract(), result -> {
             if (result.isSuccessful()) {
                 Uri croppedImageUri = result.getUriContent();
-                // Tampilkan gambar yang sudah dipotong
                 if (getContext() != null) {
                     Glide.with(getContext()).load(croppedImageUri).into(iv_profilePicture);
                 }
-                // Simpan URI ke database
                 if (userEmail != null) {
                     databaseHelper.updateProfilePhotoUri(userEmail, croppedImageUri.toString());
                 }
@@ -117,7 +113,6 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         databaseHelper = new DatabaseHelper(getContext());
 
-        // Inisialisasi semua Views
         iv_profilePicture = view.findViewById(R.id.iv_profilePicture);
         btn_edit_photo = view.findViewById(R.id.btn_edit_photo);
         tvNameValue = view.findViewById(R.id.tv_name_value);
@@ -141,7 +136,6 @@ public class ProfileFragment extends Fragment {
         setupChart();
         setupCalendar();
 
-        // Setup Listeners
         btn_edit_photo.setOnClickListener(v -> startCropImage());
 
         btnEditProfile.setOnClickListener(v -> {
@@ -166,10 +160,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void startCropImage() {
-        // Buat instance dari CropImageOptions
         CropImageOptions cropImageOptions = new CropImageOptions();
 
-        // Atur opsi dengan mereferensikan enum dari CropImageView
         cropImageOptions.cropShape = CropImageView.CropShape.OVAL; // DIUBAH: Menggunakan CropImageView
         cropImageOptions.aspectRatioX = 1;
         cropImageOptions.aspectRatioY = 1;
@@ -177,10 +169,8 @@ public class ProfileFragment extends Fragment {
         cropImageOptions.outputCompressQuality = 70;
         cropImageOptions.guidelines = CropImageView.Guidelines.ON_TOUCH; // DIUBAH: Menggunakan CropImageView
 
-        // Buat kontrak dengan opsi yang sudah diatur
         CropImageContractOptions options = new CropImageContractOptions(null, cropImageOptions);
 
-        // Jalankan launcher
         cropImageLauncher.launch(options);
     }
 
@@ -190,7 +180,6 @@ public class ProfileFragment extends Fragment {
         userEmail = sharedPreferences.getString("userEmail", null);
 
         if (userEmail != null && !userEmail.isEmpty()) {
-            // Memuat foto profil dari database
             String photoUriString = databaseHelper.getProfilePhotoUri(userEmail);
             if (photoUriString != null) {
                 Glide.with(getContext())
@@ -285,13 +274,10 @@ public class ProfileFragment extends Fragment {
         dataSet.setDrawValues(false);
         dataSet.setMode(LineDataSet.Mode.LINEAR);
 
-        // 1. Mengaktifkan gambar gradasi (fill)
         dataSet.setDrawFilled(true);
 
-        // 2. Mengatur gradasi dari atas ke bawah
         dataSet.setFillDrawable(ContextCompat.getDrawable(getContext(), R.drawable.chart_fade_green));
 
-        // 3. (Opsional) Mengatur agar titik di sumbu nol tetap terlihat
         dataSet.setDrawCircles(true); // Pastikan lingkaran selalu digambar
         dataSet.setDrawCircleHole(true);
         dataSet.setCircleHoleRadius(2.5f);

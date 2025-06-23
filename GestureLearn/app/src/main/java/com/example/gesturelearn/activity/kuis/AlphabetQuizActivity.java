@@ -26,25 +26,17 @@ import com.example.gesturelearn.utils.QuizGenerator;
 import java.util.List;
 
 public class AlphabetQuizActivity extends AppCompatActivity implements View.OnClickListener {
-
-    // UI Umum
     private TextView tvScore, tvKuisCategory;
     private Button btnNext;
     private ImageButton btnCloseQuiz;
-
-    // UI untuk Soal Standar (Tebak Huruf)
     private CardView cardStandardQuestion;
     private TextView tvQuestionNumberStandard;
     private ImageView ivQuizGif;
     private TextView[] standardOptions;
-
-    // UI untuk Soal Terbalik (Tebak GIF)
     private CardView cardReverseQuestion;
     private TextView tvQuestionNumberReverse;
     private TextView tvQuestionTextReverse;
     private ImageView[] reverseOptions;
-
-    // Data Kuis
     private List<IQuizQuestion> questionList;
     private int currentQuestionIndex = 0;
     private int score = 0;
@@ -73,7 +65,6 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
         if (category == null) category = "ABJAD_BISINDO"; // Default
 
         SignDao signDao = AppDatabase.getDatabase(this).signDao();
-        // Menggunakan generator baru untuk kuis campuran
         questionList = QuizGenerator.generateMixedAlphabetQuiz(signDao, category, 10);
 
         if (questionList == null || questionList.isEmpty()) {
@@ -86,13 +77,11 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initViews() {
-        // Init UI Umum
         tvScore = findViewById(R.id.tv_score);
         tvKuisCategory = findViewById(R.id.tv_kuis_category);
         btnNext = findViewById(R.id.btn_next);
         btnCloseQuiz = findViewById(R.id.btn_close_quiz);
 
-        // Init UI Standar
         cardStandardQuestion = findViewById(R.id.card_standard_question);
         tvQuestionNumberStandard = findViewById(R.id.tv_question_number_standard);
         ivQuizGif = findViewById(R.id.iv_quiz_gif);
@@ -103,7 +92,6 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
                 findViewById(R.id.option4_standard)
         };
 
-        // Init UI Terbalik
         cardReverseQuestion = findViewById(R.id.card_reverse_question);
         tvQuestionNumberReverse = findViewById(R.id.tv_question_number_reverse);
         tvQuestionTextReverse = findViewById(R.id.tv_question_text_reverse);
@@ -186,9 +174,7 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
         }
 
         if (v.getId() == R.id.btn_close_quiz) {
-            // Ganti finish(); dengan pemanggilan dialog
             showExitConfirmationDialog();
-            return;
         }
     }
 
@@ -239,16 +225,12 @@ public class AlphabetQuizActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    // --- Helper Methods to Reset and Show Correct Answers ---
-
     private void resetAllUI() {
-        // Reset Standard UI
         for (TextView option : standardOptions) {
             option.setBackgroundResource(R.drawable.background_alphabet_option_default);
             option.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
             option.setEnabled(true);
         }
-        // Reset Reverse UI
         for (ImageView option : reverseOptions) {
             option.setBackgroundResource(R.drawable.background_answer_default);
             option.setEnabled(true);

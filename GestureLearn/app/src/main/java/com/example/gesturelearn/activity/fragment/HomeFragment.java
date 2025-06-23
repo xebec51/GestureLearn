@@ -28,7 +28,6 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Gunakan layout yang sudah Anda buat
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -36,24 +35,18 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Inisialisasi DatabaseHelper
         databaseHelper = new DatabaseHelper(getContext());
-
-        // Inisialisasi Views
         tvName = view.findViewById(R.id.tv_name);
         recyclerView = view.findViewById(R.id.rv_home_cards);
 
-        // Memuat data pengguna dan setup RecyclerView
         loadUserData();
         setupRecyclerView();
     }
 
     private void loadUserData() {
-        // Ambil email dari intent yang dikirim ke MainActivity
         if (getActivity() != null && getActivity().getIntent() != null) {
             String userEmail = getActivity().getIntent().getStringExtra("USER_EMAIL");
             if (userEmail != null) {
-                // Ambil nama dari database menggunakan email
                 String userName = databaseHelper.getUserName(userEmail); // Anda perlu membuat metode ini di DatabaseHelper
                 if (userName != null && !userName.isEmpty()) {
                     tvName.setText("Hi, " + userName + "!");
@@ -64,12 +57,10 @@ public class HomeFragment extends Fragment {
 
     private void setupRecyclerView() {
         cardItems = new ArrayList<>();
-        // Tambahkan data untuk setiap kartu di sini
         cardItems.add(new CardItem("ABJAD BISINDO", "Pelajari huruf dengan pendekatan alami dan ekspresif khas BISINDO.", R.drawable.abjadbisindo));
         cardItems.add(new CardItem("ABJAD SIBI", "Kenali huruf dari Sistem Isyarat Bahasa Indonesia (SIBI) yang terstruktur.", R.drawable.abjadsibi));
         cardItems.add(new CardItem("KOSAKATA", "Perluas perbendaharaan kata isyarat Anda untuk komunikasi sehari-hari.", R.drawable.imgkosakata));
 
-        // Setup Adapter
         adapter = new HomeCardAdapter(getContext(), cardItems);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);

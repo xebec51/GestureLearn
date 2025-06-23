@@ -25,18 +25,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_password);
 
         databaseHelper = new DatabaseHelper(this);
-
-        // Inisialisasi Views
         etCurrentPassword = findViewById(R.id.et_current_password);
         etNewPassword = findViewById(R.id.et_new_password);
         etConfirmNewPassword = findViewById(R.id.et_confirm_new_password);
         btnSavePassword = findViewById(R.id.btn_save_password);
         btnBack = findViewById(R.id.btn_back);
-
-        // Ambil email dari intent
         userEmail = getIntent().getStringExtra("USER_EMAIL");
-
-        // Listener
         btnBack.setOnClickListener(v -> finish());
         btnSavePassword.setOnClickListener(v -> updatePassword());
     }
@@ -46,7 +40,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
         String newPassword = etNewPassword.getText().toString().trim();
         String confirmNewPassword = etConfirmNewPassword.getText().toString().trim();
 
-        // Validasi input
         if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
             Toast.makeText(this, "Semua kolom harus diisi", Toast.LENGTH_SHORT).show();
             return;

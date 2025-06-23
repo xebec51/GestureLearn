@@ -45,13 +45,13 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.CardVi
             Context context = holder.itemView.getContext();
             Intent intent;
             switch (position) {
-                case 0: // ABJAD BISINDO
+                case 0:
                     intent = new Intent(context, LearnAbjadBisindoActivity.class);
                     break;
-                case 1: // ABJAD SIBI
+                case 1:
                     intent = new Intent(context, LearnAbjadSibiActivity.class);
                     break;
-                case 2: // KOSAKATA
+                case 2:
                     intent = new Intent(context, LearnKosakataActivity.class);
                     break;
                 default:

@@ -20,7 +20,7 @@ public class OnboardingActivity extends AppCompatActivity {
         btnStart.setOnClickListener(v -> {
             Intent intent = new Intent(OnboardingActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // Tutup activity onboarding
+            finish();
         });
     }
 }

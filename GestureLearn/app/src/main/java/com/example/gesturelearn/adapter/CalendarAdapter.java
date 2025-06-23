@@ -53,7 +53,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             holder.tvDayNumber.setVisibility(View.VISIBLE);
             holder.tvDayNumber.setText(dayText);
 
-            // Reset ke style default
             holder.tvDayNumber.setBackgroundResource(android.R.color.transparent);
             holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.text_secondary));
             holder.tvDayNumber.setTypeface(null, Typeface.NORMAL);

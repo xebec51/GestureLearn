@@ -27,7 +27,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
 
-        // Inisialisasi komponen
         etName = findViewById(R.id.et_name);
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
@@ -35,38 +34,32 @@ public class RegisterActivity extends AppCompatActivity {
         btnSignUp = findViewById(R.id.btn_sign_up);
         tvSignIn = findViewById(R.id.tv_sign_in);
 
-        // Mengatur teks untuk link "Sign In" dengan format HTML
         tvSignIn.setText(Html.fromHtml(getString(R.string.prompt_signin), Html.FROM_HTML_MODE_COMPACT));
 
-        // Listener untuk tombol Sign Up
         btnSignUp.setOnClickListener(v -> {
-            // Ambil data dari input
             String name = etName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
             String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-            // Validasi input kosong
+            // cek klo misal field input kosong
             if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(RegisterActivity.this, "Semua kolom harus diisi!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Validasi password dan konfirmasi password
             if (!password.equals(confirmPassword)) {
                 Toast.makeText(RegisterActivity.this, "Password tidak cocok!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Cek apakah email sudah ada di database
+            // buat cek apakah email sudah ada di database
             if (databaseHelper.checkEmail(email)) {
                 Toast.makeText(RegisterActivity.this, "Email sudah terdaftar!", Toast.LENGTH_SHORT).show();
             } else {
-                // Jika email belum ada, tambahkan user baru
                 boolean isAdded = databaseHelper.addUser(name, email, password);
                 if (isAdded) {
                     Toast.makeText(RegisterActivity.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
-                    // Setelah registrasi, arahkan ke halaman Login
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish(); // Tutup activity register
@@ -76,9 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // Listener untuk teks "Sign In"
         tvSignIn.setOnClickListener(v -> {
-            // Kembali ke LoginActivity
             finish();
         });
     }

@@ -27,25 +27,17 @@ import com.example.gesturelearn.utils.QuizGenerator;
 import java.util.List;
 
 public class VocabularyQuizActivity extends AppCompatActivity implements View.OnClickListener {
-
-    // UI Umum
     private TextView tvScore, tvKuisCategory;
     private Button btnNext;
     private ImageButton btnCloseQuiz;
-
-    // UI untuk Soal Standar (Tebak Kata)
     private CardView cardStandardVocabulary;
     private TextView tvQuestionNumberStandard;
     private ImageView ivQuizGif;
     private Button[] standardOptions;
-
-    // UI untuk Soal Terbalik (Tebak GIF)
     private CardView cardReverseVocabulary;
     private TextView tvQuestionNumberReverse;
     private TextView tvQuestionTextReverse;
     private ImageView[] reverseOptions;
-
-    // Data Kuis
     private List<IQuizQuestion> questionList;
     private int currentQuestionIndex = 0;
     private int score = 0;
@@ -67,7 +59,6 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
 
-        // Menggunakan generator baru untuk kuis kosakata campuran
         SignDao signDao = AppDatabase.getDatabase(this).signDao();
         questionList = QuizGenerator.generateMixedVocabularyQuiz(signDao, 10);
 
@@ -81,13 +72,10 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
     }
 
     private void initViews() {
-        // UI Umum
         tvScore = findViewById(R.id.tv_score);
         tvKuisCategory = findViewById(R.id.tv_kuis_category);
         btnNext = findViewById(R.id.btn_next);
         btnCloseQuiz = findViewById(R.id.btn_close_quiz);
-
-        // UI Standar
         cardStandardVocabulary = findViewById(R.id.card_standard_vocabulary);
         tvQuestionNumberStandard = findViewById(R.id.tv_question_number_standard);
         ivQuizGif = findViewById(R.id.iv_quiz_gif);
@@ -98,7 +86,6 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
                 findViewById(R.id.btn_option4_standard)
         };
 
-        // UI Terbalik
         cardReverseVocabulary = findViewById(R.id.card_reverse_vocabulary);
         tvQuestionNumberReverse = findViewById(R.id.tv_question_number_reverse);
         tvQuestionTextReverse = findViewById(R.id.tv_question_text_reverse);
@@ -172,7 +159,6 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
         }
 
         if (v.getId() == R.id.btn_close_quiz) {
-            // Ganti finish(); dengan pemanggilan dialog
             showExitConfirmationDialog();
             return;
         }
@@ -244,7 +230,6 @@ public class VocabularyQuizActivity extends AppCompatActivity implements View.On
         }
     }
 
-    // --- Helper Methods ---
     private void resetAllUI() {
         for (Button option : standardOptions) {
             option.setBackgroundResource(R.drawable.background_answer_default);

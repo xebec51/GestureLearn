@@ -28,20 +28,19 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         databaseHelper = new DatabaseHelper(this);
-        // Menghubungkan variabel dengan komponen di layout (findViewById)
+        // hubungkan variabel dengan komponen di layout
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         btnSignIn = findViewById(R.id.btn_sign_in);
         tvSignUp = findViewById(R.id.tv_sign_up);
 
-        // Menambahkan listener klik untuk tombol Sign In
+        // kasi tambah listener klik untuk tombol Sign In
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = etEmail.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
 
-                // Validasi input
                 if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Email dan Password tidak boleh kosong!", Toast.LENGTH_SHORT).show();
                     return;
@@ -51,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
                 boolean isValidUser = databaseHelper.checkUser(email, password);
 
                 if (isValidUser) {
-                    // Jika login berhasil
                     Toast.makeText(LoginActivity.this, "Login berhasil!", Toast.LENGTH_SHORT).show();
 
                     SharedPreferences sharedPreferences = getSharedPreferences("GestureLearnPrefs", MODE_PRIVATE);
@@ -61,25 +59,19 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("userEmail", email);
                     editor.apply();
 
-                    // Pindah ke MainActivity
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("USER_EMAIL", email);
                     startActivity(intent);
                     finish(); // Tutup LoginActivity agar pengguna tidak bisa kembali
                 } else {
-                    // Jika login gagal
                     Toast.makeText(LoginActivity.this, "Email atau Password salah!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // Menambahkan listener klik untuk teks Sign Up
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Pindah ke RegisterActivity (jika sudah dibuat)
-                // Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                // startActivity(intent);
                 Toast.makeText(LoginActivity.this, "Pindah ke halaman Sign Up", Toast.LENGTH_SHORT).show();
             }
         });
@@ -88,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // GANTI baris Toast dengan Intent
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
