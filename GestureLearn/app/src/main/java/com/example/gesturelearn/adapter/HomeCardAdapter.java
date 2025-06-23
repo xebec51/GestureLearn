@@ -1,22 +1,20 @@
 package com.example.gesturelearn.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.gesturelearn.R;
-import com.example.gesturelearn.model.CardItem;
-import java.util.List;
-
-import android.content.Intent;
 import com.example.gesturelearn.activity.learn.LearnAbjadBisindoActivity;
 import com.example.gesturelearn.activity.learn.LearnAbjadSibiActivity;
 import com.example.gesturelearn.activity.learn.LearnKosakataActivity;
+import com.example.gesturelearn.model.CardItem;
+import java.util.List;
 
 public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.CardViewHolder> {
 
@@ -40,7 +38,7 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.CardVi
         CardItem currentItem = cardItems.get(position);
 
         holder.imageView.setImageResource(currentItem.getImageResId());
-        holder.titleButton.setText(currentItem.getTitle());
+        holder.titleTextView.setText(currentItem.getTitle()); // Menggunakan titleTextView
         holder.descriptionTextView.setText(currentItem.getDescription());
 
         holder.itemView.setOnClickListener(v -> {
@@ -57,7 +55,7 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.CardVi
                     intent = new Intent(context, LearnKosakataActivity.class);
                     break;
                 default:
-                    return; // Tidak melakukan apa-apa jika posisi tidak dikenali
+                    return;
             }
             context.startActivity(intent);
         });
@@ -70,15 +68,13 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.CardVi
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        Button titleButton;
+        TextView titleTextView; // Diubah dari Button ke TextView
         TextView descriptionTextView;
 
         public CardViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.iv_example);
-            titleButton = itemView.findViewById(R.id.btn_bisindoLetter);
-            // Anda perlu menambahkan id ke TextView deskripsi di item_card.xml
-            // Misalnya: android:id="@+id/tv_description"
+            titleTextView = itemView.findViewById(R.id.tv_card_title); // ID baru dari layout
             descriptionTextView = itemView.findViewById(R.id.tv_description);
         }
     }

@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
 
         // Setup Adapter
         adapter = new HomeCardAdapter(getContext(), cardItems);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }
 }
