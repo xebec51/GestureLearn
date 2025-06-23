@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +38,9 @@ import com.example.gesturelearn.activity.ChangePasswordActivity;
 import com.example.gesturelearn.activity.EditProfileActivity;
 import com.example.gesturelearn.activity.auth.LoginActivity;
 import com.example.gesturelearn.adapter.CalendarAdapter;
+import com.example.gesturelearn.data.AppDatabase;
 import com.example.gesturelearn.data.DatabaseHelper;
+import com.example.gesturelearn.model.Sign;
 import com.example.gesturelearn.utils.ProgressManager;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -51,12 +55,14 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ProfileFragment extends Fragment {
 
     // Variabel UI
     private TextView tvNameValue, tvEmailValue, tvPointValue, tvStatisticUserXp, tvStreakCount, tvCurrentMonth;
-    private Button btnEditProfile, btnLogout, btnChangePassword;
+    private Button btnEditProfile, btnLogout, btnChangePassword, btnDownloadAssets;
     private LineChart weeklyChart;
     private ImageView ivStreakIcon, iv_profilePicture;
     private RecyclerView rvCalendar;
@@ -129,6 +135,7 @@ public class ProfileFragment extends Fragment {
         tvCurrentMonth = view.findViewById(R.id.tvCurrentMonth);
         btnPreviousMonth = view.findViewById(R.id.btnPreviousMonth);
         btnNextMonth = view.findViewById(R.id.btnNextMonth);
+        btnDownloadAssets = view.findViewById(R.id.btn_download_assets);
 
         selectedDate = Calendar.getInstance();
 
@@ -156,6 +163,10 @@ public class ProfileFragment extends Fragment {
         btnNextMonth.setOnClickListener(v -> {
             selectedDate.add(Calendar.MONTH, 1);
             setupCalendar();
+        });
+        btnDownloadAssets.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Memulai pengunduhan aset di latar belakang...", Toast.LENGTH_SHORT).show();
+            downloadAllAssets();
         });
     }
 
@@ -325,4 +336,44 @@ public class ProfileFragment extends Fragment {
             getActivity().finish();
         }
     }
+
+    private void downloadAllAssets() {
+        // Gunakan ExecutorService untuk menjalankan tugas di background thread
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        // Gunakan Handler untuk berkomunikasi kembali ke main thread (jika perlu)
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            // Background work
+            if (getContext() == null) return;
+
+            // 1. Ambil semua data 'Sign' dari database Room
+            AppDatabase db = AppDatabase.getDatabase(getContext());
+            List<Sign> allSigns = db.signDao().getAllSigns();
+
+            if (allSigns == null || allSigns.isEmpty()) {
+                handler.post(() -> Toast.makeText(getContext(), "Tidak ada aset untuk diunduh.", Toast.LENGTH_SHORT).show());
+                return;
+            }
+
+            // 2. Loop melalui setiap 'Sign' dan unduh GIF menggunakan Glide
+            for (Sign sign : allSigns) {
+                if (getContext() != null && sign.gifUrl != null && !sign.gifUrl.isEmpty()) {
+                    // Glide.submit() akan mengunduh dan men-cache gambar
+                    // tanpa harus menampilkannya di sebuah ImageView.
+                    Glide.with(getContext())
+                            .load(sign.gifUrl)
+                            .submit();
+                }
+            }
+
+            // Setelah selesai, beri tahu pengguna
+            handler.post(() -> {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Semua aset berhasil diunduh dan disimpan di cache.", Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+    }
+
 }
